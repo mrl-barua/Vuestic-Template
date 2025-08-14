@@ -1,7 +1,7 @@
 <template>
   <div class="home-page">
     <!-- Hero Section -->
-    <div class="hero-container mb-8">
+    <div class="hero-container mb-16">
       <div class="hero-content">
         <div class="hero-text">
           <h1 class="hero-title">
@@ -17,7 +17,7 @@
               size="large"
               color="primary"
               @click="scrollToFeatures"
-              class="mr-4 hero-btn primary"
+              class="mr-6 hero-btn primary"
             >
               Explore Features
             </va-button>
@@ -45,7 +45,7 @@
     </div>
 
     <!-- Quick Stats -->
-    <div class="stats-grid mb-8">
+    <div class="stats-grid mb-16">
       <va-card class="stat-card" v-for="stat in quickStats" :key="stat.label">
         <va-card-content class="stat-content">
           <div class="stat-icon">
@@ -66,8 +66,8 @@
     </div>
 
     <!-- Features Grid -->
-    <div class="features-section mb-8" ref="featuresSection">
-      <div class="section-header">
+    <div class="features-section mb-16" ref="featuresSection">
+      <div class="section-header mb-12">
         <h2 class="section-title">Template Features</h2>
         <p class="section-subtitle">Discover what makes this template powerful and production-ready</p>
       </div>
@@ -79,7 +79,7 @@
           @click="navigateTo(feature.path)"
         >
           <va-card-content class="feature-content">
-            <div class="feature-icon">
+            <div class="feature-icon mb-4">
               <div class="icon-background" :style="{ backgroundColor: 'var(--va-primary)' + '15' }">
                 <va-icon
                   :name="feature.icon"
@@ -88,8 +88,8 @@
                 />
               </div>
             </div>
-            <h3 class="feature-title">{{ feature.title }}</h3>
-            <p class="feature-description">
+            <h3 class="feature-title mb-3">{{ feature.title }}</h3>
+            <p class="feature-description mb-4">
               {{ feature.description }}
             </p>
             <div class="feature-tags">
@@ -97,7 +97,7 @@
                 v-for="tag in feature.tags"
                 :key="tag"
                 size="small"
-                class="mr-1 mb-1"
+                class="mr-2 mb-2"
               >
                 {{ tag }}
               </va-chip>
@@ -108,22 +108,22 @@
     </div>
 
     <!-- Architecture Section -->
-    <div class="architecture-section mb-8" ref="architectureSection">
-      <div class="section-header">
+    <div class="architecture-section mb-16" ref="architectureSection">
+      <div class="section-header mb-12">
         <h2 class="section-title">Architecture Overview</h2>
         <p class="section-subtitle">Clean, scalable architecture following Domain-Driven Design principles</p>
       </div>
       <va-card class="architecture-card">
-        <va-card-content class="architecture-content">
+        <va-card-content class="architecture-content p-8">
           <div class="architecture-grid">
             <div class="arch-layer" v-for="layer in architectureLayers" :key="layer.name">
-              <div class="layer-header">
+              <div class="layer-header mb-4">
                 <div class="layer-icon">
                   <va-icon :name="layer.icon" :color="layer.color" />
                 </div>
                 <h3 class="layer-name">{{ layer.name }}</h3>
               </div>
-              <p class="layer-description">{{ layer.description }}</p>
+              <p class="layer-description mb-4">{{ layer.description }}</p>
               <div class="layer-components">
                 <div class="component" v-for="component in layer.components" :key="component">
                   {{ component }}
@@ -136,8 +136,8 @@
     </div>
 
     <!-- Technology Stack -->
-    <va-card class="tech-stack-card mb-8">
-      <va-card-title class="tech-stack-title">
+    <va-card class="tech-stack-card mb-16">
+      <va-card-title class="tech-stack-title p-6">
         <div class="title-content">
           <div class="title-icon">
             <va-icon name="build" />
@@ -145,10 +145,10 @@
           <h2>Technology Stack</h2>
         </div>
       </va-card-title>
-      <va-card-content class="tech-stack-content">
+      <va-card-content class="tech-stack-content p-6">
         <div class="tech-grid">
           <div class="tech-category" v-for="category in techStack" :key="category.name">
-            <h4 class="category-name">{{ category.name }}</h4>
+            <h4 class="category-name mb-4">{{ category.name }}</h4>
             <div class="tech-items">
               <div class="tech-item" v-for="tech in category.items" :key="tech.name">
                 <div class="tech-icon">
@@ -163,8 +163,8 @@
     </va-card>
 
     <!-- Getting Started -->
-    <va-card class="getting-started-card mb-8">
-      <va-card-title class="getting-started-title">
+    <va-card class="getting-started-card mb-16">
+      <va-card-title class="getting-started-title p-6">
         <div class="title-content">
           <div class="title-icon">
             <va-icon name="rocket_launch" />
@@ -172,13 +172,13 @@
           <h2>Getting Started</h2>
         </div>
       </va-card-title>
-      <va-card-content class="getting-started-content">
+      <va-card-content class="getting-started-content p-6">
         <div class="steps-grid">
           <div class="step" v-for="(step, index) in gettingStartedSteps" :key="index">
             <div class="step-number">{{ index + 1 }}</div>
             <div class="step-content">
-              <h4 class="step-title">{{ step.title }}</h4>
-              <p class="step-description">{{ step.description }}</p>
+              <h4 class="step-title mb-2">{{ step.title }}</h4>
+              <p class="step-description mb-4">{{ step.description }}</p>
               <va-button
                 v-if="step.action"
                 :color="step.action.color"
@@ -361,61 +361,79 @@ const scrollToArchitecture = () => {
 </script>
 
 <style scoped>
+/* HomePage Styles - Material Design Principles */
 .home-page {
-  padding: 1rem 0;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-8) var(--spacing-4);
 }
 
+/* Hero Section */
 .hero-container {
-  background: linear-gradient(135deg, var(--va-primary) 0%, var(--va-secondary) 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--va-primary) 0%, var(--va-primary-600) 100%);
+  border-radius: var(--radius-6);
+  padding: var(--spacing-16) var(--spacing-8);
+  margin-bottom: var(--spacing-16);
+  box-shadow: var(--shadow-5);
+  position: relative;
   overflow: hidden;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  margin-bottom: 2rem;
+}
+
+.hero-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.1)"/><circle cx="10" cy="60" r="0.5" fill="rgba(255,255,255,0.1)"/><circle cx="90" cy="40" r="0.5" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  opacity: 0.3;
 }
 
 .hero-content {
-  display: flex;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--spacing-12);
   align-items: center;
-  min-height: 300px;
-  padding: 2rem;
+  position: relative;
+  z-index: 1;
 }
 
 .hero-text {
-  flex: 2;
-  z-index: 2;
+  color: white;
 }
 
 .hero-title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  line-height: 1.2;
+  font-size: var(--font-size-5xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  margin-bottom: var(--spacing-6);
+  letter-spacing: -0.025em;
 }
 
 .hero-subtitle {
   display: block;
-  font-size: 1.5rem;
-  font-weight: 400;
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-medium);
   opacity: 0.9;
-  margin-top: 0.5rem;
+  margin-top: var(--spacing-2);
 }
 
 .hero-description {
-  font-size: 1.1rem;
-  line-height: 1.6;
-  margin-bottom: 2rem;
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-relaxed);
+  margin-bottom: var(--spacing-8);
   opacity: 0.95;
+  max-width: 600px;
 }
 
 .hero-actions {
   display: flex;
-  gap: 1rem;
+  gap: var(--spacing-4);
   flex-wrap: wrap;
 }
 
 .hero-visual {
-  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -434,49 +452,72 @@ const scrollToArchitecture = () => {
   opacity: 0.3;
 }
 
+/* Stats Grid */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-6);
+  margin-bottom: var(--spacing-16);
 }
 
 .stat-card {
-  transition: transform 0.2s, box-shadow 0.2s;
-  border-radius: 10px;
+  transition: all var(--transition-normal);
+  border-radius: var(--radius-4);
   overflow: hidden;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-2);
+  border: 1px solid var(--va-background-secondary);
 }
 
 .stat-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-4);
 }
 
 .stat-content {
   display: flex;
   align-items: center;
-  padding: 1.5rem;
+  padding: var(--spacing-6);
 }
 
 .stat-icon {
-  margin-right: 1rem;
+  margin-right: var(--spacing-4);
 }
 
 .icon-background {
-  width: 60px;
-  height: 60px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: var(--va-background-secondary);
+  transition: all var(--transition-normal);
 }
 
+.stat-info {
+  flex: 1;
+}
+
+.stat-number {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--va-text-primary);
+  margin-bottom: var(--spacing-1);
+}
+
+.stat-label {
+  font-size: var(--font-size-sm);
+  color: var(--va-text-secondary);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Hero Buttons */
 .hero-btn {
-  padding: 0.75rem 1.5rem;
-  font-weight: 600;
-  border-radius: 8px;
-  transition: all 0.3s ease;
+  padding: var(--spacing-3) var(--spacing-6);
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--radius-3);
+  transition: all var(--transition-normal);
+  font-size: var(--font-size-base);
 }
 
 .hero-btn.primary {
@@ -486,9 +527,9 @@ const scrollToArchitecture = () => {
 }
 
 .hero-btn.primary:hover {
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.95);
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-4);
 }
 
 .hero-btn.secondary {
@@ -500,279 +541,269 @@ const scrollToArchitecture = () => {
 .hero-btn.secondary:hover {
   background-color: rgba(255, 255, 255, 0.1);
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-3);
 }
 
-.stat-number {
-  font-size: 2rem;
-  font-weight: bold;
-  color: var(--va-primary);
-  margin-bottom: 0.25rem;
-}
-
-.stat-label {
-  color: var(--va-text-secondary);
-  font-size: 0.9rem;
-}
-
+/* Section Headers */
 .section-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: var(--spacing-12);
 }
 
 .section-title {
-  font-size: 2rem;
-  font-weight: 600;
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-bold);
   color: var(--va-text-primary);
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--spacing-4);
+  letter-spacing: -0.025em;
 }
 
 .section-subtitle {
-  font-size: 1rem;
+  font-size: var(--font-size-lg);
   color: var(--va-text-secondary);
-  margin-bottom: 2rem;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: var(--line-height-relaxed);
+}
+
+/* Features Grid */
+.features-section {
+  margin-bottom: var(--spacing-16);
 }
 
 .features-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--spacing-6);
 }
 
 .feature-card {
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-  border: 2px solid transparent;
-  border-radius: 10px;
+  transition: all var(--transition-normal);
+  border-radius: var(--radius-4);
   overflow: hidden;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-2);
+  border: 1px solid var(--va-background-secondary);
 }
 
 .feature-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
-  border-color: var(--va-primary);
+  box-shadow: var(--shadow-4);
 }
 
 .feature-content {
-  text-align: center;
-  padding: 2rem;
+  padding: var(--spacing-6);
 }
 
 .feature-icon {
-  margin-bottom: 1rem;
+  margin-bottom: var(--spacing-4);
 }
 
 .feature-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
   color: var(--va-text-primary);
+  margin-bottom: var(--spacing-3);
 }
 
 .feature-description {
   color: var(--va-text-secondary);
-  margin-bottom: 1.5rem;
-  line-height: 1.5;
+  line-height: var(--line-height-relaxed);
+  margin-bottom: var(--spacing-4);
 }
 
 .feature-tags {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.5rem;
+  gap: var(--spacing-2);
+}
+
+/* Architecture Section */
+.architecture-section {
+  margin-bottom: var(--spacing-16);
 }
 
 .architecture-card {
-  border-radius: 10px;
+  border-radius: var(--radius-4);
   overflow: hidden;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-2);
 }
 
 .architecture-content {
-  padding: 2rem;
+  padding: var(--spacing-8);
 }
 
 .architecture-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-8);
 }
 
 .arch-layer {
-  padding: 1.5rem;
-  border: 1px solid var(--va-background-secondary);
-  border-radius: 8px;
-  background: var(--va-background-primary);
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.arch-layer:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+  padding: var(--spacing-6);
+  border-radius: var(--radius-3);
+  background: var(--va-background-secondary);
+  border: 1px solid var(--va-background-tertiary);
 }
 
 .layer-header {
   display: flex;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: var(--spacing-4);
 }
 
 .layer-icon {
-  margin-right: 0.75rem;
+  margin-right: var(--spacing-3);
+  font-size: 1.5rem;
 }
 
 .layer-name {
-  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
   color: var(--va-text-primary);
 }
 
 .layer-description {
   color: var(--va-text-secondary);
-  margin-bottom: 1rem;
-  line-height: 1.5;
+  line-height: var(--line-height-relaxed);
+  margin-bottom: var(--spacing-4);
 }
 
 .layer-components {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: var(--spacing-2);
 }
 
 .component {
-  background: var(--va-background-secondary);
-  color: var(--va-text-primary);
-  padding: 0.4rem 0.8rem;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  border: 1px solid var(--va-background-secondary);
-  transition: background-color 0.2s, border-color 0.2s;
+  background: var(--va-background-tertiary);
+  color: var(--va-text-secondary);
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--radius-2);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
 }
 
-.component:hover {
-  background: var(--va-primary-light);
-  border-color: var(--va-primary);
-}
-
+/* Technology Stack */
 .tech-stack-card {
-  border-radius: 10px;
+  border-radius: var(--radius-4);
   overflow: hidden;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-2);
+  margin-bottom: var(--spacing-16);
 }
 
 .tech-stack-title {
-  background: linear-gradient(135deg, var(--va-info) 0%, var(--va-warning) 100%);
-  color: white;
-  padding: 1.5rem 2rem;
-  border-radius: 10px 10px 0 0;
-  text-align: center;
+  background: var(--va-background-secondary);
+  border-bottom: 1px solid var(--va-background-tertiary);
+}
+
+.title-content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.title-icon {
+  color: var(--va-primary);
+  font-size: 1.5rem;
 }
 
 .tech-stack-content {
-  padding: 2rem;
+  padding: var(--spacing-6);
 }
 
 .tech-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--spacing-8);
 }
 
 .tech-category {
-  text-align: center;
+  margin-bottom: var(--spacing-6);
 }
 
 .category-name {
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
   color: var(--va-text-primary);
-  margin-bottom: 1rem;
+  margin-bottom: var(--spacing-4);
+  padding-bottom: var(--spacing-2);
+  border-bottom: 2px solid var(--va-background-tertiary);
 }
 
 .tech-items {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.75rem;
+  flex-direction: column;
+  gap: var(--spacing-3);
 }
 
 .tech-item {
   display: flex;
   align-items: center;
-  background: var(--va-background-secondary);
-  padding: 0.6rem 1rem;
-  border-radius: 8px;
-  border: 1px solid var(--va-background-secondary);
-  transition: background-color 0.2s, border-color 0.2s;
+  gap: var(--spacing-3);
+  padding: var(--spacing-2);
+  border-radius: var(--radius-2);
+  transition: all var(--transition-normal);
 }
 
 .tech-item:hover {
-  background: var(--va-primary-light);
-  border-color: var(--va-primary);
+  background: var(--va-background-secondary);
 }
 
 .tech-icon {
-  margin-right: 0.75rem;
+  color: var(--va-primary);
+  font-size: 1.25rem;
 }
 
 .tech-name {
-  font-size: 0.9rem;
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   color: var(--va-text-primary);
 }
 
+/* Getting Started */
 .getting-started-card {
-  border-radius: 10px;
+  border-radius: var(--radius-4);
   overflow: hidden;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-2);
+  margin-bottom: var(--spacing-16);
 }
 
 .getting-started-title {
-  background: linear-gradient(135deg, var(--va-success) 0%, var(--va-info) 100%);
-  color: white;
-  padding: 1.5rem 2rem;
-  border-radius: 10px 10px 0 0;
-  text-align: center;
+  background: var(--va-background-secondary);
+  border-bottom: 1px solid var(--va-background-tertiary);
 }
 
 .getting-started-content {
-  padding: 2rem;
+  padding: var(--spacing-6);
 }
 
 .steps-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-6);
 }
 
 .step {
   display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  padding: 1.5rem;
-  border-radius: 10px;
-  background: var(--va-background-primary);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.step:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+  gap: var(--spacing-4);
+  padding: var(--spacing-4);
+  border-radius: var(--radius-3);
+  background: var(--va-background-secondary);
+  border: 1px solid var(--va-background-tertiary);
 }
 
 .step-number {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: var(--va-primary);
-  width: 2.5rem;
-  height: 2.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--va-primary);
+  color: white;
   border-radius: 50%;
-  background: var(--va-primary-light);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-lg);
+  flex-shrink: 0;
 }
 
 .step-content {
@@ -780,63 +811,127 @@ const scrollToArchitecture = () => {
 }
 
 .step-title {
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
   color: var(--va-text-primary);
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--spacing-2);
 }
 
 .step-description {
   color: var(--va-text-secondary);
-  margin-bottom: 1rem;
-  line-height: 1.5;
+  line-height: var(--line-height-relaxed);
+  margin-bottom: var(--spacing-4);
 }
 
 .step-action {
-  font-weight: 500;
-  border-radius: 8px;
-  padding: 0.5rem 1rem;
-  font-size: 0.9rem;
+  font-weight: var(--font-weight-medium);
 }
 
-code {
-  background: var(--va-background-primary);
-  padding: 0.2rem 0.4rem;
-  border-radius: 4px;
-  font-family: 'Courier New', monospace;
-  color: var(--va-primary);
-}
-
+/* Responsive Design */
 @media (max-width: 768px) {
+  .home-page {
+    padding: var(--spacing-6) var(--spacing-3);
+  }
+  
+  .hero-container {
+    padding: var(--spacing-12) var(--spacing-6);
+    margin-bottom: var(--spacing-12);
+  }
+  
   .hero-content {
-    flex-direction: column;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-8);
     text-align: center;
-    padding: 1.5rem;
   }
   
   .hero-title {
-    font-size: 2rem;
+    font-size: var(--font-size-4xl);
   }
   
   .hero-subtitle {
-    font-size: 1.25rem;
+    font-size: var(--font-size-xl);
+  }
+  
+  .hero-description {
+    font-size: var(--font-size-base);
+  }
+  
+  .hero-actions {
+    justify-content: center;
   }
   
   .stats-grid {
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-template-columns: 1fr;
+    gap: var(--spacing-4);
   }
   
   .features-grid {
     grid-template-columns: 1fr;
+    gap: var(--spacing-4);
   }
   
   .architecture-grid {
     grid-template-columns: 1fr;
+    gap: var(--spacing-6);
   }
   
-  .getting-started-content {
+  .tech-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-6);
+  }
+  
+  .steps-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-4);
+  }
+  
+  .section-header {
+    margin-bottom: var(--spacing-8);
+  }
+  
+  .section-title {
+    font-size: var(--font-size-3xl);
+  }
+  
+  .section-subtitle {
+    font-size: var(--font-size-base);
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-container {
+    padding: var(--spacing-8) var(--spacing-4);
+  }
+  
+  .hero-title {
+    font-size: var(--font-size-3xl);
+  }
+  
+  .hero-actions {
     flex-direction: column;
-    text-align: center;
+    align-items: center;
+  }
+  
+  .hero-btn {
+    width: 100%;
+    max-width: 280px;
+  }
+  
+  .stat-content {
+    padding: var(--spacing-4);
+  }
+  
+  .feature-content {
+    padding: var(--spacing-4);
+  }
+  
+  .architecture-content {
+    padding: var(--spacing-6);
+  }
+  
+  .tech-stack-content,
+  .getting-started-content {
+    padding: var(--spacing-4);
   }
 }
 </style>

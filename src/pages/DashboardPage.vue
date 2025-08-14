@@ -1,22 +1,19 @@
 <template>
   <div class="dashboard-page">
     <!-- Page Header -->
-    <div class="page-header-container mb-8">
-      <div class="header-content">
-        <div class="header-text">
+    <div class="page-header-container mb-16">
+      <div class="page-header-content">
+        <div class="page-header-text">
           <h1 class="page-title">Dashboard</h1>
-          <p class="page-subtitle">
-            Real-time overview of your application with Domain-Driven Design architecture
-          </p>
+          <p class="page-subtitle">Real-time overview of your application</p>
         </div>
-        <div class="header-actions">
+        <div class="page-header-actions">
           <va-button
-            @click="refreshDashboard"
-            variant="outlined"
-            icon="refresh"
-            :loading="isLoading"
+            color="primary"
+            @click="refreshData"
             class="refresh-button"
           >
+            <va-icon name="refresh" class="mr-2" />
             Refresh
           </va-button>
         </div>
@@ -24,7 +21,7 @@
     </div>
 
     <!-- Key Metrics -->
-    <div class="metrics-grid mb-8">
+    <div class="metrics-grid mb-16">
       <va-card class="metric-card" v-for="metric in keyMetrics" :key="metric.label">
         <va-card-content class="metric-content">
           <div class="metric-icon">
@@ -37,18 +34,11 @@
             </div>
           </div>
           <div class="metric-info">
-            <div class="metric-value">{{ metric.value }}</div>
+            <div class="metric-number">{{ metric.value }}</div>
             <div class="metric-label">{{ metric.label }}</div>
-            <div class="metric-change" v-if="metric.change !== undefined">
-              <va-icon
-                :name="metric.change >= 0 ? 'trending_up' : 'trending_down'"
-                size="small"
-                :color="metric.change >= 0 ? 'success' : 'danger'"
-              />
-              <span :class="metric.change >= 0 ? 'text-success' : 'text-danger'">
-                {{ Math.abs(metric.change) }}%
-              </span>
-              <span class="metric-period">vs last month</span>
+            <div class="metric-change" :class="metric.trend">
+              <va-icon :name="metric.trend === 'up' ? 'arrow_upward' : 'arrow_downward'" />
+              {{ metric.change }}%
             </div>
           </div>
         </va-card-content>
@@ -56,45 +46,55 @@
     </div>
 
     <!-- Charts Section -->
-    <div class="charts-section mb-8">
+    <div class="charts-section mb-16">
+      <div class="section-header mb-12">
+        <h2 class="section-title">Analytics Overview</h2>
+        <p class="section-subtitle">Performance metrics and trends</p>
+      </div>
       <div class="charts-grid">
-        <!-- User Activity Chart -->
         <va-card class="chart-card">
           <va-card-title class="chart-title">
             <div class="title-content">
               <div class="title-icon">
-                <va-icon name="analytics" />
+                <va-icon name="insert_chart" />
               </div>
-              <h2>User Activity</h2>
+              <h3>User Activity</h3>
             </div>
           </va-card-title>
-          <va-card-content class="chart-content">
-            <div class="chart-container">
-              <div class="chart-placeholder">
-                <va-icon name="bar_chart" size="x-large" color="primary" />
-                <p>User activity chart would be displayed here</p>
-                <p class="text-caption">Using Chart.js or similar library</p>
+          <va-card-content class="chart-content p-6">
+            <div class="chart-bars">
+              <div
+                v-for="(bar, index) in chartData"
+                :key="index"
+                class="chart-bar"
+                :style="getChartBarStyle(bar.value, bar.color)"
+              >
+                <span class="bar-label">{{ bar.label }}</span>
+                <span class="bar-value">{{ bar.value }}</span>
               </div>
             </div>
           </va-card-content>
         </va-card>
 
-        <!-- System Health Chart -->
         <va-card class="chart-card">
           <va-card-title class="chart-title">
             <div class="title-content">
               <div class="title-icon">
-                <va-icon name="monitor_heart" />
+                <va-icon name="assessment" />
               </div>
-              <h2>System Health</h2>
+              <h3>Performance Metrics</h3>
             </div>
           </va-card-title>
-          <va-card-content class="chart-content">
-            <div class="chart-container">
-              <div class="chart-placeholder">
-                <va-icon name="pie_chart" size="x-large" color="success" />
-                <p>System health metrics would be displayed here</p>
-                <p class="text-caption">Real-time monitoring data</p>
+          <va-card-content class="chart-content p-6">
+            <div class="performance-metrics">
+              <div class="metric-item" v-for="metric in performanceMetrics" :key="metric.name">
+                <div class="metric-header">
+                  <span class="metric-name">{{ metric.name }}</span>
+                  <span class="metric-value">{{ metric.value }}</span>
+                </div>
+                <div class="metric-bar">
+                  <div class="metric-progress" :style="{ width: metric.percentage + '%', backgroundColor: metric.color }"></div>
+                </div>
               </div>
             </div>
           </va-card-content>
@@ -103,63 +103,56 @@
     </div>
 
     <!-- Recent Activity -->
-    <va-card class="activity-card mb-8">
-      <va-card-title class="activity-title">
-        <div class="title-content">
-          <div class="title-icon">
-            <va-icon name="history" />
-          </div>
-          <h2>Recent Activity</h2>
-        </div>
-      </va-card-title>
-      <va-card-content class="activity-content">
-        <div class="activity-list">
-          <div class="activity-item" v-for="(activity, index) in recentActivities" :key="index">
-            <div class="activity-icon">
-              <div class="icon-background" :style="{ backgroundColor: activity.color + '15' }">
-                <va-icon :name="activity.icon" :color="activity.color" size="small" />
+    <div class="activity-section mb-16">
+      <div class="section-header mb-12">
+        <h2 class="section-title">Recent Activity</h2>
+        <p class="section-subtitle">Latest updates and actions</p>
+      </div>
+      <va-card class="activity-card">
+        <va-card-content class="activity-content p-6">
+          <div class="activity-list">
+            <div class="activity-item" v-for="activity in recentActivities" :key="activity.id">
+              <div class="activity-icon">
+                <va-icon :name="activity.icon" :color="activity.color" />
+              </div>
+              <div class="activity-details">
+                <div class="activity-text">{{ activity.text }}</div>
+                <div class="activity-time">{{ activity.time }}</div>
+              </div>
+              <div class="activity-status" :class="activity.status">
+                {{ activity.status }}
               </div>
             </div>
-            <div class="activity-content">
-              <div class="activity-text">{{ activity.text }}</div>
-              <div class="activity-time">{{ activity.time }}</div>
-            </div>
-            <div class="activity-status">
-              <va-chip :color="activity.statusColor" size="small">
-                {{ activity.status }}
-              </va-chip>
-            </div>
           </div>
-        </div>
-      </va-card-content>
-    </va-card>
+        </va-card-content>
+      </va-card>
+    </div>
 
     <!-- Quick Actions -->
-    <va-card class="actions-card mb-8">
-      <va-card-title class="actions-title">
-        <div class="title-content">
-          <div class="title-icon">
-            <va-icon name="flash_on" />
+    <div class="actions-section mb-16">
+      <div class="section-header mb-12">
+        <h2 class="section-title">Quick Actions</h2>
+        <p class="section-subtitle">Common tasks and shortcuts</p>
+      </div>
+      <va-card class="actions-card">
+        <va-card-content class="actions-content p-6">
+          <div class="actions-grid">
+            <va-button
+              v-for="action in quickActions"
+              :key="action.label"
+              :color="action.color"
+              variant="outlined"
+              size="large"
+              @click="action.handler"
+              class="action-button"
+            >
+              <va-icon :name="action.icon" class="mr-3" />
+              {{ action.label }}
+            </va-button>
           </div>
-          <h2>Quick Actions</h2>
-        </div>
-      </va-card-title>
-      <va-card-content class="actions-content">
-        <div class="actions-grid">
-          <va-button
-            v-for="action in quickActions"
-            :key="action.label"
-            :color="action.color"
-            :icon="action.icon"
-            variant="outlined"
-            class="action-button"
-            @click="action.handler"
-          >
-            {{ action.label }}
-          </va-button>
-        </div>
-      </va-card-content>
-    </va-card>
+        </va-card-content>
+      </va-card>
+    </div>
   </div>
 </template>
 
@@ -177,71 +170,75 @@ const keyMetrics = ref([
     value: '1,247',
     icon: 'people',
     color: 'primary',
-    change: 12
+    change: 12,
+    trend: 'up'
   },
   {
     label: 'Active Sessions',
     value: '89',
     icon: 'visibility',
     color: 'success',
-    change: 8
+    change: 8,
+    trend: 'up'
   },
   {
     label: 'System Load',
     value: '67%',
     icon: 'speed',
     color: 'warning',
-    change: -5
+    change: -5,
+    trend: 'down'
   },
   {
     label: 'Error Rate',
     value: '0.02%',
     icon: 'error',
     color: 'danger',
-    change: -15
+    change: -15,
+    trend: 'down'
   }
 ])
 
 const recentActivities = ref([
   {
+    id: 1,
     text: 'New user registration completed',
     time: '5 minutes ago',
     icon: 'person_add',
     color: 'success',
-    status: 'Completed',
-    statusColor: 'success'
+    status: 'Completed'
   },
   {
+    id: 2,
     text: 'Database backup initiated',
     time: '15 minutes ago',
     icon: 'backup',
     color: 'info',
-    status: 'In Progress',
-    statusColor: 'warning'
+    status: 'In Progress'
   },
   {
+    id: 3,
     text: 'Security scan completed',
     time: '30 minutes ago',
     icon: 'security',
     color: 'success',
-    status: 'Completed',
-    statusColor: 'success'
+    status: 'Completed'
   },
   {
+    id: 4,
     text: 'Performance optimization applied',
     time: '45 minutes ago',
     icon: 'tune',
     color: 'primary',
-    status: 'Completed',
-    statusColor: 'success'
+    status: 'Completed'
   },
   {
+    id: 5,
     text: 'API rate limit exceeded',
     time: '1 hour ago',
     icon: 'warning',
     color: 'warning',
-    status: 'Resolved',
-    statusColor: 'info'
+    status: 'Resolved'
   }
 ])
 
@@ -272,8 +269,30 @@ const quickActions = ref([
   }
 ])
 
+const chartData = ref([
+  { label: 'Jan', value: 120, color: 'primary' },
+  { label: 'Feb', value: 150, color: 'success' },
+  { label: 'Mar', value: 180, color: 'warning' },
+  { label: 'Apr', value: 200, color: 'danger' },
+  { label: 'May', value: 220, color: 'primary' },
+  { label: 'Jun', value: 250, color: 'success' },
+  { label: 'Jul', value: 280, color: 'warning' },
+  { label: 'Aug', value: 300, color: 'danger' },
+  { label: 'Sep', value: 320, color: 'primary' },
+  { label: 'Oct', value: 350, color: 'success' },
+  { label: 'Nov', value: 380, color: 'warning' },
+  { label: 'Dec', value: 400, color: 'danger' }
+])
+
+const performanceMetrics = ref([
+  { name: 'CPU Usage', value: '75%', percentage: 75, color: 'primary' },
+  { name: 'Memory Usage', value: '85%', percentage: 85, color: 'success' },
+  { name: 'Disk Space', value: '95%', percentage: 95, color: 'warning' },
+  { name: 'Network Traffic', value: '60%', percentage: 60, color: 'info' }
+])
+
 // Methods
-const refreshDashboard = async () => {
+const refreshData = async () => {
   isLoading.value = true
   try {
     // Simulate API call
@@ -286,6 +305,14 @@ const refreshDashboard = async () => {
   }
 }
 
+const getChartBarStyle = (value: number, color: string) => {
+  const percentage = (value / 400) * 100; // Assuming max value is 400
+  return {
+    height: `${percentage}%`,
+    backgroundColor: color,
+    borderRadius: '8px'
+  };
+};
 
 
 // Lifecycle
@@ -295,295 +322,510 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* DashboardPage Styles - Material Design Principles */
 .dashboard-page {
-  padding: 1rem 0;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-8) var(--spacing-4);
 }
 
+/* Page Header */
 .page-header-container {
-  background: linear-gradient(135deg, var(--va-primary) 0%, var(--va-secondary) 100%);
-  color: white;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  margin-bottom: 2rem;
+  background: linear-gradient(135deg, var(--va-primary) 0%, var(--va-primary-600) 100%);
+  border-radius: var(--radius-6);
+  padding: var(--spacing-12) var(--spacing-8);
+  margin-bottom: var(--spacing-16);
+  box-shadow: var(--shadow-5);
+  position: relative;
+  overflow: hidden;
 }
 
-.header-content {
+.page-header-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.1)"/><circle cx="10" cy="60" r="0.5" fill="rgba(255,255,255,0.1)"/><circle cx="90" cy="40" r="0.5" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  opacity: 0.3;
+}
+
+.page-header-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.page-header-text {
+  color: white;
 }
 
 .page-title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin: 0 0 0.5rem 0;
+  font-size: var(--font-size-5xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  margin-bottom: var(--spacing-2);
+  letter-spacing: -0.025em;
 }
 
 .page-subtitle {
-  font-size: 1.1rem;
+  font-size: var(--font-size-lg);
   opacity: 0.9;
-  margin: 0;
+  line-height: var(--line-height-relaxed);
+}
+
+.page-header-actions {
+  display: flex;
+  gap: var(--spacing-4);
 }
 
 .refresh-button {
-  background-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
   color: white;
-  border-color: white;
-  transition: background-color 0.3s ease;
+  backdrop-filter: blur(10px);
+  transition: all var(--transition-normal);
 }
 
 .refresh-button:hover {
-  background-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-4);
 }
 
+/* Metrics Grid */
 .metrics-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-6);
+  margin-bottom: var(--spacing-16);
 }
 
 .metric-card {
-  transition: transform 0.2s, box-shadow 0.2s;
-  border-radius: 12px;
+  transition: all var(--transition-normal);
+  border-radius: var(--radius-4);
   overflow: hidden;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-2);
+  border: 1px solid var(--va-background-secondary);
 }
 
 .metric-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-4);
 }
 
 .metric-content {
   display: flex;
   align-items: center;
-  padding: 1.5rem;
+  padding: var(--spacing-6);
 }
 
 .metric-icon {
-  margin-right: 1rem;
+  margin-right: var(--spacing-4);
 }
 
 .icon-background {
-  width: 60px;
-  height: 60px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 1rem;
+  background-color: var(--va-background-secondary);
+  transition: all var(--transition-normal);
 }
 
-.metric-value {
-  font-size: 2rem;
-  font-weight: bold;
+.metric-info {
+  flex: 1;
+}
+
+.metric-number {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
   color: var(--va-text-primary);
-  margin-bottom: 0.25rem;
+  margin-bottom: var(--spacing-1);
 }
 
 .metric-label {
+  font-size: var(--font-size-sm);
   color: var(--va-text-secondary);
-  font-size: 0.9rem;
-  margin-bottom: 0.5rem;
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--spacing-2);
 }
 
 .metric-change {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
-  font-size: 0.8rem;
+  gap: var(--spacing-1);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
 }
 
-.metric-period {
+.metric-change.up {
+  color: var(--va-success);
+}
+
+.metric-change.down {
+  color: var(--va-danger);
+}
+
+/* Section Headers */
+.section-header {
+  text-align: center;
+  margin-bottom: var(--spacing-12);
+}
+
+.section-title {
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--va-text-primary);
+  margin-bottom: var(--spacing-4);
+  letter-spacing: -0.025em;
+}
+
+.section-subtitle {
+  font-size: var(--font-size-lg);
   color: var(--va-text-secondary);
-  margin-left: 0.5rem;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: var(--line-height-relaxed);
 }
 
+/* Charts Section */
 .charts-section {
-  padding: 0 1rem;
+  margin-bottom: var(--spacing-16);
 }
 
 .charts-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 1.5rem;
+  gap: var(--spacing-6);
 }
 
 .chart-card {
-  min-height: 300px;
-  border-radius: 12px;
+  border-radius: var(--radius-4);
   overflow: hidden;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.chart-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-2);
+  border: 1px solid var(--va-background-secondary);
 }
 
 .chart-title {
-  background: linear-gradient(135deg, var(--va-primary) 0%, var(--va-secondary) 100%);
-  color: white;
-  padding: 1rem 1.5rem;
-  border-radius: 12px 12px 0 0;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 0;
+  background: var(--va-background-secondary);
+  border-bottom: 1px solid var(--va-background-tertiary);
+  padding: var(--spacing-4) var(--spacing-6);
 }
 
 .title-content {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--spacing-3);
 }
 
 .title-icon {
-  background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
-  padding: 0.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  color: var(--va-primary);
+  font-size: 1.5rem;
 }
 
 .chart-content {
-  padding: 1.5rem;
+  padding: var(--spacing-6);
 }
 
-.chart-container {
-  height: 250px;
+/* Chart Bars */
+.chart-bars {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: end;
+  gap: var(--spacing-2);
+  height: 200px;
+  padding: var(--spacing-4) 0;
 }
 
-.chart-placeholder {
-  text-align: center;
+.chart-bar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: end;
+  min-height: 20px;
+  position: relative;
+  transition: all var(--transition-normal);
+}
+
+.chart-bar:hover {
+  transform: scale(1.05);
+}
+
+.bar-label {
+  position: absolute;
+  bottom: -25px;
+  font-size: var(--font-size-xs);
+  color: var(--va-text-secondary);
+  font-weight: var(--font-weight-medium);
+}
+
+.bar-value {
+  position: absolute;
+  top: -25px;
+  font-size: var(--font-size-xs);
+  color: var(--va-text-primary);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Performance Metrics */
+.performance-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.metric-item {
+  padding: var(--spacing-3);
+  border-radius: var(--radius-2);
+  background: var(--va-background-secondary);
+}
+
+.metric-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-2);
+}
+
+.metric-name {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--va-text-primary);
+}
+
+.metric-value {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
   color: var(--va-text-secondary);
 }
 
-.chart-placeholder p {
-  margin: 0.5rem 0;
+.metric-bar {
+  height: 8px;
+  background: var(--va-background-tertiary);
+  border-radius: var(--radius-1);
+  overflow: hidden;
+}
+
+.metric-progress {
+  height: 100%;
+  border-radius: var(--radius-1);
+  transition: width var(--transition-normal);
+}
+
+/* Activity Section */
+.activity-section {
+  margin-bottom: var(--spacing-16);
 }
 
 .activity-card {
-  border-radius: 12px;
+  border-radius: var(--radius-4);
   overflow: hidden;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-}
-
-.activity-title {
-  background: linear-gradient(135deg, var(--va-primary) 0%, var(--va-secondary) 100%);
-  color: white;
-  padding: 1rem 1.5rem;
-  border-radius: 12px 12px 0 0;
-  margin-bottom: 0;
+  box-shadow: var(--shadow-2);
+  border: 1px solid var(--va-background-secondary);
 }
 
 .activity-content {
-  padding: 1.5rem;
+  padding: var(--spacing-6);
 }
 
 .activity-list {
-  max-height: 400px;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
 }
 
 .activity-item {
   display: flex;
   align-items: center;
-  padding: 1rem 0;
-  border-bottom: 1px solid var(--va-background-secondary);
+  gap: var(--spacing-4);
+  padding: var(--spacing-4);
+  border-radius: var(--radius-3);
+  background: var(--va-background-secondary);
+  border: 1px solid var(--va-background-tertiary);
+  transition: all var(--transition-normal);
 }
 
-.activity-item:last-child {
-  border-bottom: none;
+.activity-item:hover {
+  background: var(--va-background-tertiary);
+  transform: translateX(4px);
 }
 
 .activity-icon {
-  margin-right: 1rem;
-  width: 40px;
-  text-align: center;
+  color: var(--va-primary);
+  font-size: 1.25rem;
+  flex-shrink: 0;
 }
 
-.activity-content {
+.activity-details {
   flex: 1;
 }
 
 .activity-text {
-  font-weight: 500;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
   color: var(--va-text-primary);
-  margin-bottom: 0.25rem;
+  margin-bottom: var(--spacing-1);
 }
 
 .activity-time {
-  font-size: 0.8rem;
+  font-size: var(--font-size-xs);
   color: var(--va-text-secondary);
 }
 
 .activity-status {
-  margin-top: 0.5rem;
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--radius-2);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.activity-status.Completed {
+  background: var(--va-success);
+  color: white;
+}
+
+.activity-status.In-Progress {
+  background: var(--va-warning);
+  color: white;
+}
+
+.activity-status.Resolved {
+  background: var(--va-info);
+  color: white;
+}
+
+/* Actions Section */
+.actions-section {
+  margin-bottom: var(--spacing-16);
 }
 
 .actions-card {
-  border-radius: 12px;
+  border-radius: var(--radius-4);
   overflow: hidden;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-}
-
-.actions-title {
-  background: linear-gradient(135deg, var(--va-primary) 0%, var(--va-secondary) 100%);
-  color: white;
-  padding: 1rem 1.5rem;
-  border-radius: 12px 12px 0 0;
-  margin-bottom: 0;
+  box-shadow: var(--shadow-2);
+  border: 1px solid var(--va-background-secondary);
 }
 
 .actions-content {
-  padding: 1.5rem;
+  padding: var(--spacing-6);
 }
 
 .actions-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
+  gap: var(--spacing-4);
 }
 
 .action-button {
-  height: 48px;
-  border-radius: 8px;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+  height: 56px;
+  font-weight: var(--font-weight-medium);
+  transition: all var(--transition-normal);
+  border-radius: var(--radius-3);
 }
 
 .action-button:hover {
-  background-color: rgba(var(--va-primary-rgb), 0.1);
-  border-color: var(--va-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-3);
 }
 
+/* Responsive Design */
 @media (max-width: 768px) {
-  .header-content {
+  .dashboard-page {
+    padding: var(--spacing-6) var(--spacing-3);
+  }
+  
+  .page-header-container {
+    padding: var(--spacing-8) var(--spacing-6);
+    margin-bottom: var(--spacing-12);
+  }
+  
+  .page-header-content {
     flex-direction: column;
+    gap: var(--spacing-6);
     text-align: center;
-    gap: 1rem;
   }
   
   .page-title {
-    font-size: 2rem;
+    font-size: var(--font-size-4xl);
+  }
+  
+  .page-subtitle {
+    font-size: var(--font-size-base);
   }
   
   .metrics-grid {
     grid-template-columns: 1fr;
+    gap: var(--spacing-4);
   }
   
   .charts-grid {
     grid-template-columns: 1fr;
+    gap: var(--spacing-4);
+  }
+  
+  .chart-bars {
+    height: 150px;
   }
   
   .actions-grid {
     grid-template-columns: 1fr;
+    gap: var(--spacing-3);
+  }
+  
+  .section-header {
+    margin-bottom: var(--spacing-8);
+  }
+  
+  .section-title {
+    font-size: var(--font-size-3xl);
+  }
+  
+  .section-subtitle {
+    font-size: var(--font-size-base);
+  }
+}
+
+@media (max-width: 480px) {
+  .page-header-container {
+    padding: var(--spacing-6) var(--spacing-4);
+  }
+  
+  .page-title {
+    font-size: var(--font-size-3xl);
+  }
+  
+  .metric-content {
+    padding: var(--spacing-4);
+  }
+  
+  .chart-content {
+    padding: var(--spacing-4);
+  }
+  
+  .activity-content {
+    padding: var(--spacing-4);
+  }
+  
+  .actions-content {
+    padding: var(--spacing-4);
+  }
+  
+  .chart-bars {
+    height: 120px;
+    gap: var(--spacing-1);
+  }
+  
+  .bar-label,
+  .bar-value {
+    font-size: 10px;
   }
 }
 </style>

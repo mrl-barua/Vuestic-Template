@@ -1,566 +1,280 @@
 <template>
   <div class="data-page">
     <!-- Page Header -->
-    <div class="page-header-container mb-8">
-      <div class="header-content">
-        <div class="header-text">
-          <h1 class="page-title">Data Management & State</h1>
-          <p class="page-subtitle">
-            Explore data management patterns, tables, and state management with Domain-Driven Design principles.
-          </p>
+    <div class="page-header-container mb-16">
+      <div class="page-header-content">
+        <div class="page-header-text">
+          <h1 class="page-title">Data Management</h1>
+          <p class="page-subtitle">Manage and analyze your application data</p>
         </div>
-        <div class="header-actions">
+        <div class="page-header-actions">
           <va-button
+            color="primary"
             @click="refreshData"
-            variant="outlined"
-            icon="refresh"
-            :loading="isLoading"
             class="refresh-button"
           >
-            Refresh Data
+            <va-icon name="refresh" class="mr-2" />
+            Refresh
           </va-button>
         </div>
       </div>
     </div>
 
-    <!-- Statistics Overview -->
-    <div class="stats-overview mb-8">
-      <va-card class="stat-card" v-for="stat in statistics" :key="stat.label">
+    <!-- Quick Stats -->
+    <div class="stats-grid mb-16">
+      <va-card class="stat-card" v-for="stat in quickStats" :key="stat.label">
         <va-card-content class="stat-content">
-          <div class="stat-icon-wrapper">
-            <div class="stat-icon-background" :style="{ backgroundColor: getStatColor(stat.label) + '15' }">
+          <div class="stat-icon">
+            <div class="icon-background" :style="{ backgroundColor: stat.color + '15' }">
               <va-icon
-                :name="getStatIcon(stat.label)"
+                :name="stat.icon"
                 size="large"
-                :color="getStatColor(stat.label)"
+                :color="stat.color"
               />
             </div>
           </div>
           <div class="stat-info">
             <div class="stat-number">{{ stat.value }}</div>
             <div class="stat-label">{{ stat.label }}</div>
-            <div class="stat-change" v-if="stat.change">
-              <va-icon
-                :name="stat.change > 0 ? 'arrow_upward' : 'arrow_downward'"
-                size="small"
-                :color="stat.change > 0 ? 'success' : 'danger'"
-              />
-              <span :class="stat.change > 0 ? 'text-success' : 'text-danger'">
-                {{ Math.abs(stat.change) }}%
-              </span>
+            <div class="stat-change" :class="stat.trend">
+              <va-icon :name="stat.trend === 'up' ? 'arrow_upward' : 'arrow_downward'" />
+              {{ stat.change }}%
             </div>
           </div>
         </va-card-content>
       </va-card>
     </div>
 
-    <!-- Mock Chart Data Display -->
-    <va-card class="chart-card mb-8">
-      <va-card-title class="chart-title">
-        <div class="title-content">
-          <div class="title-icon">
-            <va-icon name="insert_chart" />
-          </div>
-          <h2>User Activity Overview</h2>
-        </div>
-      </va-card-title>
-      <va-card-content class="chart-content">
-        <div class="chart-grid">
-          <div class="chart-item" v-for="(item, index) in chartData" :key="index">
-            <div class="chart-bar" :style="getChartBarStyle(item)">
-              <div class="chart-label">{{ item.label }}</div>
-              <div class="chart-value">{{ item.value }}</div>
+    <!-- Charts Section -->
+    <div class="charts-section mb-16">
+      <div class="section-header mb-12">
+        <h2 class="section-title">Data Analytics</h2>
+        <p class="section-subtitle">Visual insights and trends</p>
+      </div>
+      <div class="charts-grid">
+        <va-card class="chart-card">
+          <va-card-title class="chart-title">
+            <div class="title-content">
+              <div class="title-icon">
+                <va-icon name="insert_chart" />
+              </div>
+              <h3>Monthly Trends</h3>
             </div>
-          </div>
-        </div>
-        
-        <!-- Chart Legend -->
-        <div class="chart-legend">
-          <div class="legend-item" v-for="(item, index) in chartData" :key="index">
-            <div class="legend-color" :style="{ backgroundColor: item.color }"></div>
-            <span>{{ item.label }}</span>
-          </div>
-        </div>
-      </va-card-content>
-    </va-card>
+          </va-card-title>
+          <va-card-content class="chart-content p-6">
+            <div class="chart-bars">
+              <div
+                v-for="(bar, index) in chartData"
+                :key="index"
+                class="chart-bar"
+                :style="getChartBarStyle(bar.value, bar.color)"
+              >
+                <span class="bar-label">{{ bar.label }}</span>
+                <span class="bar-value">{{ bar.value }}</span>
+              </div>
+            </div>
+          </va-card-content>
+        </va-card>
 
-    <!-- Mock Data Summary -->
-    <va-card class="summary-card mb-8">
-      <va-card-title class="summary-title">
-        <div class="title-content">
-          <div class="title-icon">
-            <va-icon name="info" />
-          </div>
-          <h2>Data Summary & Insights</h2>
-        </div>
-      </va-card-title>
-      <va-card-content class="summary-content">
-        <div class="summary-grid">
-          <div class="summary-item" v-for="(item, index) in summaryItems" :key="index">
-            <div class="summary-icon">
-              <div class="icon-background" :style="{ backgroundColor: item.iconColor + '15' }">
-                <va-icon :name="item.icon" size="large" :color="item.iconColor" />
+        <va-card class="chart-card">
+          <va-card-title class="chart-title">
+            <div class="title-content">
+              <div class="title-icon">
+                <va-icon name="pie_chart" />
               </div>
+              <h3>Data Distribution</h3>
             </div>
-            <div class="summary-content">
-              <h6>{{ item.title }}</h6>
-              <p>{{ item.description }}</p>
+          </va-card-title>
+          <va-card-content class="chart-content p-6">
+            <div class="pie-chart-placeholder">
+              <va-icon name="pie_chart" size="x-large" color="primary" />
+              <p>Pie chart visualization</p>
+              <p class="text-caption">Data distribution analysis</p>
             </div>
-          </div>
-        </div>
-      </va-card-content>
-    </va-card>
+          </va-card-content>
+        </va-card>
+      </div>
+    </div>
 
-    <!-- Mock Data Sample Display -->
-    <va-card class="mock-data-card mb-8">
-      <va-card-title class="mock-data-title">
-        <div class="title-content">
-          <div class="title-icon">
-            <va-icon name="data_usage" />
-          </div>
-          <h2>Sample Data Structure</h2>
-        </div>
-      </va-card-title>
-      <va-card-content class="mock-data-content">
-        <div class="mock-data-grid">
-          <div class="mock-data-item">
-            <h6>User Counts by Role</h6>
-            <div class="mock-data-chart">
-              <div class="mock-bar" style="height: 60px; background: var(--va-danger);">
-                <span>Admin: {{ users.filter((u: User) => u.role.value === 'admin').length }}</span>
+    <!-- Data Summary -->
+    <div class="summary-section mb-16">
+      <div class="section-header mb-12">
+        <h2 class="section-title">Data Summary</h2>
+        <p class="section-subtitle">Key insights and overview</p>
+      </div>
+      <va-card class="summary-card">
+        <va-card-content class="summary-content p-6">
+          <div class="summary-grid">
+            <div class="summary-item" v-for="item in summaryItems" :key="item.label">
+              <div class="summary-icon">
+                <va-icon :name="item.icon" :color="item.color" />
               </div>
-              <div class="mock-bar" style="height: 40px; background: var(--va-warning);">
-                <span>Moderator: {{ users.filter((u: User) => u.role.value === 'moderator').length }}</span>
-              </div>
-              <div class="mock-bar" style="height: 80px; background: var(--va-primary);">
-                <span>User: {{ users.filter((u: User) => u.role.value === 'user').length }}</span>
+              <div class="summary-details">
+                <div class="summary-value">{{ item.value }}</div>
+                <div class="summary-label">{{ item.label }}</div>
               </div>
             </div>
           </div>
-          <div class="mock-data-item">
-            <h6>Recent User Activity</h6>
-            <div class="mock-activity-list">
-              <div class="mock-activity" v-for="(user, index) in users.slice(0, 3)" :key="index">
-                <va-icon name="person" size="small" class="mr-2" />
-                <span>{{ user.profile.firstName }} {{ user.profile.lastName }}</span>
-                <va-chip size="small" :color="getStatusColor(user.status.value)">
-                  {{ user.status.value }}
+        </va-card-content>
+      </va-card>
+    </div>
+
+    <!-- Mock Data Table -->
+    <div class="mock-data-section mb-16">
+      <div class="section-header mb-12">
+        <h2 class="section-title">Sample Data</h2>
+        <p class="section-subtitle">Example data structure and format</p>
+      </div>
+      <va-card class="mock-data-card">
+        <va-card-content class="mock-data-content p-6">
+          <div class="table-container">
+            <va-data-table
+              :items="mockData"
+              :columns="tableColumns"
+              :loading="isLoading"
+              class="data-table"
+            >
+              <template #cell(role)="{ item }">
+                <va-chip :color="getRoleColor(item.role)" size="small">
+                  {{ item.role }}
                 </va-chip>
-              </div>
-            </div>
+              </template>
+              <template #cell(status)="{ item }">
+                <va-chip :color="getStatusColor(item.status)" size="small">
+                  {{ item.status }}
+                </va-chip>
+              </template>
+              <template #cell(actions)="{ item }">
+                <div class="action-buttons">
+                  <va-button
+                    size="small"
+                    variant="outlined"
+                    color="primary"
+                    class="action-btn"
+                    @click="viewItem(item)"
+                  >
+                    <va-icon name="visibility" />
+                  </va-button>
+                  <va-button
+                    size="small"
+                    variant="outlined"
+                    color="warning"
+                    class="action-btn"
+                    @click="editItem(item)"
+                  >
+                    <va-icon name="edit" />
+                  </va-button>
+                  <va-button
+                    size="small"
+                    variant="outlined"
+                    color="danger"
+                    class="action-btn"
+                    @click="deleteItem(item)"
+                  >
+                    <va-icon name="delete" />
+                  </va-button>
+                </div>
+              </template>
+            </va-data-table>
           </div>
-        </div>
-      </va-card-content>
-    </va-card>
+        </va-card-content>
+      </va-card>
+    </div>
 
     <!-- Data Controls -->
-    <va-card class="controls-card mb-8">
-      <va-card-title class="controls-title">
-        <div class="title-content">
-          <div class="title-icon">
-            <va-icon name="settings" />
-          </div>
-          <h2>Data Controls & Filters</h2>
-        </div>
-      </va-card-title>
-      <va-card-content class="controls-content">
-        <div class="controls-grid">
-          <va-input
-            v-model="searchQuery"
-            placeholder="Search users..."
-            class="search-input"
-            prepend-icon="search"
-            clearable
-          />
-          <va-select
-            v-model="selectedRole"
-            :options="roleOptions"
-            placeholder="Filter by role"
-            class="filter-select"
-            clearable
-          />
-          <va-select
-            v-model="selectedStatus"
-            :options="statusOptions"
-            placeholder="Filter by status"
-            class="filter-select"
-            clearable
-          />
-          <va-select
-            v-model="sortBy"
-            :options="sortOptions"
-            placeholder="Sort by"
-            class="filter-select"
-          />
-          <va-button
-            @click="addRandomUser"
-            color="success"
-            icon="person_add"
-            class="action-button"
-          >
-            Add User
-          </va-button>
-          <va-button
-            @click="exportData"
-            variant="outlined"
-            icon="download"
-            class="action-button"
-          >
-            Export
-          </va-button>
-          <va-button
-            @click="generateReport"
-            variant="outlined"
-            icon="assessment"
-            class="action-button"
-            color="info"
-          >
-            Generate Report
-          </va-button>
-        </div>
-      </va-card-content>
-    </va-card>
-
-    <!-- Recent Activity Mock Data -->
-    <va-card class="activity-card mb-8">
-      <va-card-title class="activity-title">
-        <div class="title-content">
-          <div class="title-icon">
-            <va-icon name="history" />
-          </div>
-          <h2>Recent Activity</h2>
-        </div>
-      </va-card-title>
-      <va-card-content class="activity-content">
-        <div class="activity-list">
-          <div class="activity-item" v-for="(activity, index) in recentActivities" :key="index">
-            <div class="activity-icon">
-              <div class="icon-background" :style="{ backgroundColor: activity.color + '15' }">
-                <va-icon :name="activity.icon" :color="activity.color" size="small" />
+    <div class="controls-section mb-16">
+      <div class="section-header mb-12">
+        <h2 class="section-title">Data Controls</h2>
+        <p class="section-subtitle">Manage and manipulate data</p>
+      </div>
+      <va-card class="controls-card">
+        <va-card-content class="controls-content p-6">
+          <div class="controls-grid">
+            <div class="control-group">
+              <label class="control-label">Search</label>
+              <va-input
+                v-model="searchQuery"
+                placeholder="Search data..."
+                class="control-input"
+              >
+                <template #prepend>
+                  <va-icon name="search" />
+                </template>
+              </va-input>
+            </div>
+            <div class="control-group">
+              <label class="control-label">Filter by Status</label>
+              <va-select
+                v-model="statusFilter"
+                :options="statusOptions"
+                placeholder="Select status"
+                class="control-select"
+              />
+            </div>
+            <div class="control-group">
+              <label class="control-label">Sort by</label>
+              <va-select
+                v-model="sortBy"
+                :options="sortOptions"
+                placeholder="Select field"
+                class="control-select"
+              />
+            </div>
+            <div class="control-group">
+              <label class="control-label">Actions</label>
+              <div class="control-actions">
+                <va-button
+                  color="primary"
+                  variant="outlined"
+                  size="small"
+                  class="control-btn"
+                  @click="exportData"
+                >
+                  <va-icon name="download" class="mr-2" />
+                  Export
+                </va-button>
+                <va-button
+                  color="success"
+                  variant="outlined"
+                  size="small"
+                  class="control-btn"
+                  @click="importData"
+                >
+                  <va-icon name="upload" class="mr-2" />
+                  Import
+                </va-button>
               </div>
             </div>
-            <div class="activity-content">
-              <div class="activity-text">{{ activity.text }}</div>
-              <div class="activity-time">{{ activity.time }}</div>
-            </div>
-            <div class="activity-status">
-              <va-chip :color="activity.statusColor" size="small">
+          </div>
+        </va-card-content>
+      </va-card>
+    </div>
+
+    <!-- Activity Log -->
+    <div class="activity-section mb-16">
+      <div class="section-header mb-12">
+        <h2 class="section-title">Activity Log</h2>
+        <p class="section-subtitle">Recent data operations and changes</p>
+      </div>
+      <va-card class="activity-card">
+        <va-card-content class="activity-content p-6">
+          <div class="activity-list">
+            <div class="activity-item" v-for="activity in recentActivities" :key="activity.id">
+              <div class="activity-icon">
+                <va-icon :name="activity.icon" :color="activity.color" />
+              </div>
+              <div class="activity-details">
+                <div class="activity-text">{{ activity.text }}</div>
+                <div class="activity-time">{{ activity.time }}</div>
+              </div>
+              <div class="activity-status" :class="activity.status">
                 {{ activity.status }}
-              </va-chip>
-            </div>
-          </div>
-        </div>
-      </va-card-content>
-    </va-card>
-
-    <!-- Data Table -->
-    <va-card class="table-card mb-8">
-      <va-card-title class="table-title">
-        <div class="title-content">
-          <div class="title-icon">
-            <va-icon name="table" />
-          </div>
-          <h2>Users Management ({{ filteredUsers.length }} users)</h2>
-        </div>
-      </va-card-title>
-      <va-card-content class="table-content">
-        <va-data-table
-          :items="paginatedUsers"
-          :columns="tableColumns"
-          :loading="isLoading"
-          :items-per-page="itemsPerPage"
-          :current-page="currentPage"
-          :total="filteredUsers.length"
-          @update:current-page="currentPage = $event"
-          @update:items-per-page="itemsPerPage = $event"
-          class="data-table"
-        >
-          <!-- Custom cell templates -->
-          <template #cell(profile)="{ item }">
-            <div class="user-profile">
-              <va-avatar
-                :src="item.profile.avatar"
-                :alt="`${item.profile.firstName} ${item.profile.lastName}`"
-                size="small"
-                class="mr-2"
-              />
-              <div class="user-info">
-                <div class="user-name">{{ item.profile.firstName }} {{ item.profile.lastName }}</div>
-                <div class="user-email">{{ item.email.value }}</div>
               </div>
             </div>
-          </template>
-
-          <template #cell(role)="{ item }">
-            <va-chip
-              :color="getRoleColor(item.role.value)"
-              size="small"
-              class="role-chip"
-            >
-              <va-icon :name="getRoleIcon(item.role.value)" size="small" class="mr-1" />
-              {{ item.role.value }}
-            </va-chip>
-          </template>
-
-          <template #cell(status)="{ item }">
-            <va-chip
-              :color="getStatusColor(item.status.value)"
-              size="small"
-              class="status-chip"
-            >
-              <va-icon :name="getStatusIcon(item.status.value)" size="small" class="mr-1" />
-              {{ item.status.value }}
-            </va-chip>
-          </template>
-
-          <template #cell(permissions)="{ item }">
-            <div class="permissions-list">
-              <va-chip
-                v-for="permission in item.role.permissions.slice(0, 3)"
-                :key="permission"
-                size="small"
-                variant="outlined"
-                class="mr-1 mb-1"
-              >
-                {{ permission }}
-              </va-chip>
-              <va-chip
-                v-if="item.role.permissions.length > 3"
-                size="small"
-                variant="outlined"
-                color="secondary"
-              >
-                +{{ item.role.permissions.length - 3 }}
-              </va-chip>
-            </div>
-          </template>
-
-          <template #cell(actions)="{ item }">
-            <div class="action-buttons">
-              <va-button
-                size="small"
-                variant="text"
-                icon="visibility"
-                @click="viewUser(item)"
-                class="action-btn"
-                color="info"
-              />
-              <va-button
-                size="small"
-                variant="text"
-                icon="edit"
-                @click="editUser(item)"
-                class="action-btn"
-                color="warning"
-              />
-              <va-button
-                size="small"
-                variant="text"
-                icon="delete"
-                @click="deleteUser(item.id.value)"
-                class="action-btn"
-                color="danger"
-              />
-            </div>
-          </template>
-        </va-data-table>
-
-        <!-- Pagination Info -->
-        <div class="pagination-info">
-          <span class="text-body-2">
-            Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to 
-            {{ Math.min(currentPage * itemsPerPage, filteredUsers.length) }} of 
-            {{ filteredUsers.length }} users
-          </span>
-        </div>
-      </va-card-content>
-    </va-card>
-
-    <!-- User Form Modal -->
-    <va-modal
-      v-model="showUserModal"
-      :title="isEditing ? 'Edit User' : 'Add New User'"
-      size="large"
-      class="user-modal"
-    >
-      <div class="user-form">
-        <div class="form-section">
-          <h6 class="form-section-title">Personal Information</h6>
-          <div class="form-row">
-            <va-input
-              v-model="userForm.firstName"
-              label="First Name *"
-              placeholder="Enter first name"
-              class="form-input"
-              required
-            />
-            <va-input
-              v-model="userForm.lastName"
-              label="Last Name *"
-              placeholder="Enter last name"
-              class="form-input"
-              required
-            />
           </div>
-          <div class="form-row">
-            <va-input
-              v-model="userForm.email"
-              label="Email *"
-              type="email"
-              placeholder="Enter email address"
-              class="form-input"
-              required
-            />
-            <va-select
-              v-model="userForm.role"
-              label="Role *"
-              :options="roleOptions"
-              class="form-input"
-              required
-            />
-          </div>
-        </div>
-
-        <div class="form-section">
-          <h6 class="form-section-title">Profile Details</h6>
-          <div class="form-row">
-            <va-input
-              v-model="userForm.bio"
-              label="Bio"
-              placeholder="Enter bio"
-              class="form-input"
-              type="textarea"
-              rows="3"
-            />
-            <va-input
-              v-model="userForm.location"
-              label="Location"
-              placeholder="Enter location"
-              class="form-input"
-            />
-          </div>
-          <div class="form-row">
-            <va-input
-              v-model="userForm.website"
-              label="Website"
-              placeholder="Enter website URL"
-              class="form-input"
-            />
-            <va-select
-              v-model="userForm.status"
-              label="Status *"
-              :options="statusOptions"
-              class="form-input"
-              required
-            />
-          </div>
-        </div>
-
-        <div class="form-actions">
-          <va-button
-            @click="saveUser"
-            :loading="isSaving"
-            color="primary"
-            class="mr-2"
-          >
-            {{ isEditing ? 'Update User' : 'Create User' }}
-          </va-button>
-          <va-button
-            variant="outlined"
-            @click="closeUserModal"
-          >
-            Cancel
-          </va-button>
-        </div>
-      </div>
-    </va-modal>
-
-    <!-- User Details Modal -->
-    <va-modal
-      v-model="showUserDetailsModal"
-      title="User Details"
-      size="large"
-      class="user-details-modal"
-    >
-      <div v-if="selectedUser" class="user-details">
-        <div class="user-header">
-          <va-avatar
-            :src="selectedUser.profile.avatar"
-            :alt="`${selectedUser.profile.firstName} ${selectedUser.profile.lastName}`"
-            size="large"
-            class="mr-3"
-          />
-          <div class="user-header-info">
-            <h3>{{ selectedUser.profile.firstName }} {{ selectedUser.profile.lastName }}</h3>
-            <p class="user-email">{{ selectedUser.email.value }}</p>
-            <div class="user-badges">
-              <va-chip :color="getRoleColor(selectedUser.role.value)" class="mr-2">
-                {{ selectedUser.role.value }}
-              </va-chip>
-              <va-chip :color="getStatusColor(selectedUser.status.value)">
-                {{ selectedUser.status.value }}
-              </va-chip>
-            </div>
-          </div>
-        </div>
-
-        <div class="user-details-grid">
-          <div class="detail-section">
-            <h6>Profile Information</h6>
-            <div class="detail-item">
-              <span class="detail-label">Bio:</span>
-              <span class="detail-value">{{ selectedUser.profile.bio || 'No bio provided' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">Location:</span>
-              <span class="detail-value">{{ selectedUser.profile.location || 'Not specified' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">Website:</span>
-              <span class="detail-value">
-                <a v-if="selectedUser.profile.website" :href="selectedUser.profile.website" target="_blank">
-                  {{ selectedUser.profile.website }}
-                </a>
-                <span v-else>Not specified</span>
-              </span>
-            </div>
-          </div>
-
-          <div class="detail-section">
-            <h6>Account Information</h6>
-            <div class="detail-item">
-              <span class="detail-label">Created:</span>
-              <span class="detail-value">{{ formatDate(selectedUser.createdAt) }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">Last Updated:</span>
-              <span class="detail-value">{{ formatDate(selectedUser.updatedAt) }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">Last Login:</span>
-              <span class="detail-value">
-                {{ selectedUser.lastLoginAt ? formatDate(selectedUser.lastLoginAt) : 'Never' }}
-              </span>
-            </div>
-          </div>
-
-          <div class="detail-section">
-            <h6>Permissions</h6>
-            <div class="permissions-grid">
-              <va-chip
-                v-for="permission in selectedUser.role.permissions"
-                :key="permission"
-                size="small"
-                variant="outlined"
-                class="mr-1 mb-1"
-              >
-                {{ permission }}
-              </va-chip>
-            </div>
-          </div>
-        </div>
-      </div>
-    </va-modal>
+        </va-card-content>
+      </va-card>
+    </div>
   </div>
 </template>
 
@@ -1063,10 +777,11 @@ const getStatColor = (label: string) => {
   }
 }
 
-const getChartBarStyle = (item: any) => {
+const getChartBarStyle = (value: number, color: string) => {
+  const height = value * 10; // Scale height based on value
   return {
-    height: `${item.height}px`,
-    background: `linear-gradient(135deg, ${item.color}, ${item.color}dd)`,
+    height: `${height}px`,
+    background: `linear-gradient(135deg, ${color}, ${color}dd)`,
     borderRadius: '8px 8px 0 0',
     display: 'flex',
     flexDirection: 'column',
@@ -1141,662 +856,619 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* DataPage Styles - Material Design Principles */
 .data-page {
-  padding: 1rem 0;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-8) var(--spacing-4);
 }
 
+/* Page Header */
 .page-header-container {
-  background: linear-gradient(135deg, var(--va-primary) 0%, var(--va-secondary) 100%);
-  color: white;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-  margin-bottom: 2rem;
+  background: linear-gradient(135deg, var(--va-primary) 0%, var(--va-primary-600) 100%);
+  border-radius: var(--radius-6);
+  padding: var(--spacing-12) var(--spacing-8);
+  margin-bottom: var(--spacing-16);
+  box-shadow: var(--shadow-5);
+  position: relative;
+  overflow: hidden;
 }
 
-.header-content {
+.page-header-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.1)"/><circle cx="10" cy="60" r="0.5" fill="rgba(255,255,255,0.1)"/><circle cx="90" cy="40" r="0.5" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  opacity: 0.3;
+}
+
+.page-header-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.page-header-text {
+  color: white;
 }
 
 .page-title {
-  font-size: 2.8rem;
-  font-weight: 700;
-  margin: 0 0 0.5rem 0;
-  color: white;
+  font-size: var(--font-size-5xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  margin-bottom: var(--spacing-2);
+  letter-spacing: -0.025em;
 }
 
 .page-subtitle {
-  font-size: 1.2rem;
+  font-size: var(--font-size-lg);
   opacity: 0.9;
-  margin: 0;
-  color: rgba(255, 255, 255, 0.9);
+  line-height: var(--line-height-relaxed);
+}
+
+.page-header-actions {
+  display: flex;
+  gap: var(--spacing-4);
 }
 
 .refresh-button {
-  background-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
   color: white;
-  border-color: white;
-  border-radius: 8px;
-  padding: 0.75rem 1.5rem;
-  font-weight: 600;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+  backdrop-filter: blur(10px);
+  transition: all var(--transition-normal);
 }
 
 .refresh-button:hover {
-  background-color: rgba(255, 255, 255, 0.3);
-  border-color: white;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-4);
 }
 
-.stats-overview {
+/* Stats Grid */
+.stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-6);
+  margin-bottom: var(--spacing-16);
 }
 
 .stat-card {
-  background: var(--va-background-primary);
-  border: 1px solid var(--va-background-secondary);
-  border-radius: 12px;
+  transition: all var(--transition-normal);
+  border-radius: var(--radius-4);
   overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-2);
+  border: 1px solid var(--va-background-secondary);
 }
 
 .stat-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-4);
 }
 
 .stat-content {
   display: flex;
   align-items: center;
-  padding: 1.5rem;
-  gap: 1rem;
+  padding: var(--spacing-6);
 }
 
-.stat-icon-wrapper {
-  width: 60px;
-  height: 60px;
+.stat-icon {
+  margin-right: var(--spacing-4);
+}
+
+.icon-background {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 15px;
   background-color: var(--va-background-secondary);
+  transition: all var(--transition-normal);
 }
 
-.stat-icon-background {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  background-color: var(--va-background-primary);
+.stat-info {
+  flex: 1;
 }
 
 .stat-number {
-  font-size: 2.2rem;
-  font-weight: bold;
-  color: var(--va-primary);
-  margin-bottom: 0.25rem;
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--va-text-primary);
+  margin-bottom: var(--spacing-1);
 }
 
 .stat-label {
+  font-size: var(--font-size-sm);
   color: var(--va-text-secondary);
-  font-size: 0.9rem;
-  margin-bottom: 0.5rem;
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--spacing-2);
 }
 
 .stat-change {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
-  font-size: 0.8rem;
+  gap: var(--spacing-1);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.stat-change.up {
+  color: var(--va-success);
+}
+
+.stat-change.down {
+  color: var(--va-danger);
+}
+
+/* Section Headers */
+.section-header {
+  text-align: center;
+  margin-bottom: var(--spacing-12);
+}
+
+.section-title {
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--va-text-primary);
+  margin-bottom: var(--spacing-4);
+  letter-spacing: -0.025em;
+}
+
+.section-subtitle {
+  font-size: var(--font-size-lg);
+  color: var(--va-text-secondary);
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: var(--line-height-relaxed);
+}
+
+/* Charts Section */
+.charts-section {
+  margin-bottom: var(--spacing-16);
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: var(--spacing-6);
 }
 
 .chart-card {
-  background: var(--va-background-primary);
-  border: 1px solid var(--va-background-secondary);
-  border-radius: 12px;
+  border-radius: var(--radius-4);
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-2);
+  border: 1px solid var(--va-background-secondary);
 }
 
 .chart-title {
-  display: flex;
-  align-items: center;
-  padding: 1.5rem;
-  border-bottom: 1px solid var(--va-background-secondary);
+  background: var(--va-background-secondary);
+  border-bottom: 1px solid var(--va-background-tertiary);
+  padding: var(--spacing-4) var(--spacing-6);
 }
 
 .title-content {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--spacing-3);
 }
 
 .title-icon {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  background-color: var(--va-background-secondary);
+  color: var(--va-primary);
+  font-size: 1.5rem;
 }
 
 .chart-content {
-  padding: 1.5rem;
+  padding: var(--spacing-6);
 }
 
-.chart-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 1.25rem;
+/* Chart Bars */
+.chart-bars {
+  display: flex;
   align-items: end;
-}
-
-.chart-item {
-  text-align: center;
+  gap: var(--spacing-2);
+  height: 200px;
+  padding: var(--spacing-4) 0;
 }
 
 .chart-bar {
-  border-radius: 8px 8px 0 0;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
   align-items: center;
-  padding: 0.5rem;
-  color: white;
-  font-weight: 600;
-  min-height: 60px;
+  justify-content: end;
+  min-height: 20px;
   position: relative;
-  transition: height 0.3s ease;
+  transition: all var(--transition-normal);
 }
 
 .chart-bar:hover {
-  height: 70px; /* Slightly taller on hover */
+  transform: scale(1.05);
 }
 
-.chart-label {
-  font-size: 0.8rem;
-  margin-bottom: 0.25rem;
+.bar-label {
+  position: absolute;
+  bottom: -25px;
+  font-size: var(--font-size-xs);
+  color: var(--va-text-secondary);
+  font-weight: var(--font-weight-medium);
+}
+
+.bar-value {
+  position: absolute;
+  top: -25px;
+  font-size: var(--font-size-xs);
+  color: var(--va-text-primary);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Pie Chart Placeholder */
+.pie-chart-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
   text-align: center;
   color: var(--va-text-secondary);
 }
 
-.chart-value {
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: var(--va-primary);
+.pie-chart-placeholder p {
+  margin: var(--spacing-2) 0;
 }
 
-.chart-legend {
-  display: flex;
-  justify-content: center;
-  gap: 1.5rem;
-  margin-top: 1.5rem;
-  padding: 0 1.5rem;
+.text-caption {
+  font-size: var(--font-size-sm);
+  opacity: 0.7;
 }
 
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.legend-color {
-  width: 16px;
-  height: 16px;
-  border-radius: 4px;
-  border: 2px solid var(--va-background-secondary);
-}
-
-.mock-data-card {
-  background: var(--va-background-primary);
-  border: 1px solid var(--va-background-secondary);
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-}
-
-.mock-data-title {
-  display: flex;
-  align-items: center;
-  padding: 1.5rem;
-  border-bottom: 1px solid var(--va-background-secondary);
-}
-
-.mock-data-content {
-  padding: 1.5rem;
-}
-
-.mock-data-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-}
-
-.mock-data-item h6 {
-  margin: 0 0 1rem 0;
-  color: var(--va-text-primary);
-  font-weight: 600;
-}
-
-.mock-data-chart {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.mock-bar {
-  display: flex;
-  align-items: center;
-  padding: 0.5rem;
-  color: white;
-  font-weight: 500;
-  border-radius: 4px;
-  min-height: 40px;
-}
-
-.mock-activity-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.mock-activity {
-  display: flex;
-  align-items: center;
-  padding: 0.75rem;
-  border: 1px solid var(--va-background-secondary);
-  border-radius: 6px;
-  background: var(--va-background-primary);
+/* Summary Section */
+.summary-section {
+  margin-bottom: var(--spacing-16);
 }
 
 .summary-card {
-  background: var(--va-background-primary);
-  border: 1px solid var(--va-background-secondary);
-  border-radius: 12px;
+  border-radius: var(--radius-4);
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-}
-
-.summary-title {
-  display: flex;
-  align-items: center;
-  padding: 1.5rem;
-  border-bottom: 1px solid var(--va-background-secondary);
+  box-shadow: var(--shadow-2);
+  border: 1px solid var(--va-background-secondary);
 }
 
 .summary-content {
-  padding: 1.5rem;
+  padding: var(--spacing-6);
 }
 
 .summary-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
+  gap: var(--spacing-6);
 }
 
 .summary-item {
   display: flex;
-  align-items: flex-start;
-  padding: 1rem;
-  border: 1px solid var(--va-background-secondary);
-  border-radius: 8px;
-  background: var(--va-background-primary);
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.summary-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  align-items: center;
+  gap: var(--spacing-4);
+  padding: var(--spacing-4);
+  border-radius: var(--radius-3);
+  background: var(--va-background-secondary);
+  border: 1px solid var(--va-background-tertiary);
 }
 
 .summary-icon {
-  margin-right: 1rem;
-  flex-shrink: 0;
+  color: var(--va-primary);
+  font-size: 1.5rem;
 }
 
-.icon-background {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  background-color: var(--va-background-secondary);
+.summary-details {
+  flex: 1;
 }
 
-.summary-content h6 {
-  margin: 0 0 0.5rem 0;
+.summary-value {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
   color: var(--va-text-primary);
-  font-weight: 600;
+  margin-bottom: var(--spacing-1);
 }
 
-.summary-content p {
-  margin: 0;
+.summary-label {
+  font-size: var(--font-size-sm);
   color: var(--va-text-secondary);
-  font-size: 0.9rem;
-  line-height: 1.4;
+  font-weight: var(--font-weight-medium);
+}
+
+/* Mock Data Section */
+.mock-data-section {
+  margin-bottom: var(--spacing-16);
+}
+
+.mock-data-card {
+  border-radius: var(--radius-4);
+  overflow: hidden;
+  box-shadow: var(--shadow-2);
+  border: 1px solid var(--va-background-secondary);
+}
+
+.mock-data-content {
+  padding: var(--spacing-6);
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+}
+
+.action-buttons {
+  display: flex;
+  gap: var(--spacing-2);
+}
+
+.action-btn {
+  min-width: 32px;
+  height: 32px;
+  padding: 0;
+}
+
+/* Controls Section */
+.controls-section {
+  margin-bottom: var(--spacing-16);
+}
+
+.controls-card {
+  border-radius: var(--radius-4);
+  overflow: hidden;
+  box-shadow: var(--shadow-2);
+  border: 1px solid var(--va-background-secondary);
+}
+
+.controls-content {
+  padding: var(--spacing-6);
+}
+
+.controls-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--spacing-6);
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.control-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--va-text-primary);
+}
+
+.control-input,
+.control-select {
+  width: 100%;
+}
+
+.control-actions {
+  display: flex;
+  gap: var(--spacing-2);
+  flex-wrap: wrap;
+}
+
+.control-btn {
+  font-weight: var(--font-weight-medium);
+}
+
+/* Activity Section */
+.activity-section {
+  margin-bottom: var(--spacing-16);
 }
 
 .activity-card {
-  background: var(--va-background-primary);
-  border: 1px solid var(--va-background-secondary);
-  border-radius: 12px;
+  border-radius: var(--radius-4);
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-}
-
-.activity-title {
-  display: flex;
-  align-items: center;
-  padding: 1.5rem;
-  border-bottom: 1px solid var(--va-background-secondary);
+  box-shadow: var(--shadow-2);
+  border: 1px solid var(--va-background-secondary);
 }
 
 .activity-content {
-  padding: 1.5rem;
+  padding: var(--spacing-6);
 }
 
 .activity-list {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--spacing-4);
 }
 
 .activity-item {
   display: flex;
   align-items: center;
-  padding: 1rem;
-  border: 1px solid var(--va-background-secondary);
-  border-radius: 8px;
-  background: var(--va-background-primary);
-  transition: transform 0.2s, box-shadow 0.2s;
+  gap: var(--spacing-4);
+  padding: var(--spacing-4);
+  border-radius: var(--radius-3);
+  background: var(--va-background-secondary);
+  border: 1px solid var(--va-background-tertiary);
+  transition: all var(--transition-normal);
 }
 
 .activity-item:hover {
+  background: var(--va-background-tertiary);
   transform: translateX(4px);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .activity-icon {
-  margin-right: 1rem;
+  color: var(--va-primary);
+  font-size: 1.25rem;
   flex-shrink: 0;
 }
 
-.activity-content {
+.activity-details {
   flex: 1;
 }
 
 .activity-text {
-  font-weight: 500;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
   color: var(--va-text-primary);
-  margin-bottom: 0.25rem;
+  margin-bottom: var(--spacing-1);
 }
 
 .activity-time {
-  font-size: 0.8rem;
+  font-size: var(--font-size-xs);
   color: var(--va-text-secondary);
 }
 
 .activity-status {
-  flex-shrink: 0;
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--radius-2);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-.controls-card {
-  background: var(--va-background-primary);
-  border: 1px solid var(--va-background-secondary);
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-}
-
-.controls-title {
-  display: flex;
-  align-items: center;
-  padding: 1.5rem;
-  border-bottom: 1px solid var(--va-background-secondary);
-}
-
-.controls-content {
-  padding: 1.5rem;
-}
-
-.controls-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-  align-items: end;
-}
-
-.search-input {
-  grid-column: span 2;
-}
-
-.filter-select {
-  min-width: 150px;
-}
-
-.action-button {
-  min-width: 120px;
-  background-color: var(--va-primary);
+.activity-status.Completed {
+  background: var(--va-success);
   color: white;
-  border-color: var(--va-primary);
-  border-radius: 8px;
-  padding: 0.75rem 1.5rem;
-  font-weight: 600;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
-.action-button:hover {
-  background-color: var(--va-primary-dark);
-  border-color: var(--va-primary-dark);
-}
-
-.data-table {
-  margin-bottom: 1rem;
-}
-
-.user-profile {
-  display: flex;
-  align-items: center;
-}
-
-.user-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.user-name {
-  font-weight: 600;
-  color: var(--va-text-primary);
-}
-
-.user-email {
-  font-size: 0.8rem;
-  color: var(--va-text-secondary);
-}
-
-.role-chip,
-.status-chip {
-  font-weight: 500;
-}
-
-.permissions-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.action-btn {
-  min-width: auto;
-  background-color: var(--va-info);
+.activity-status.In-Progress {
+  background: var(--va-warning);
   color: white;
-  border-color: var(--va-info);
-  border-radius: 8px;
-  padding: 0.5rem 1rem;
-  font-weight: 600;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
-.action-btn:hover {
-  background-color: var(--va-info-dark);
-  border-color: var(--va-info-dark);
+.activity-status.Resolved {
+  background: var(--va-info);
+  color: white;
 }
 
-.pagination-info {
-  text-align: center;
-  margin-top: 1rem;
-  color: var(--va-text-secondary);
-}
-
-.user-form {
-  padding: 1rem 0;
-}
-
-.form-section {
-  margin-bottom: 2rem;
-  padding: 1rem;
-  border: 1px solid var(--va-background-secondary);
-  border-radius: 8px;
-  background: var(--va-background-primary);
-}
-
-.form-section-title {
-  margin: 0 0 1rem 0;
-  color: var(--va-text-primary);
-  font-weight: 600;
-}
-
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.form-input {
-  width: 100%;
-}
-
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.user-details {
-  padding: 1rem 0;
-}
-
-.user-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--va-background-secondary);
-}
-
-.user-header-info h3 {
-  margin: 0 0 0.5rem 0;
-  color: var(--va-text-primary);
-}
-
-.user-email {
-  color: var(--va-text-secondary);
-  margin: 0 0 1rem 0;
-}
-
-.user-badges {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.user-details-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-}
-
-.detail-section h6 {
-  margin: 0 0 1rem 0;
-  color: var(--va-text-primary);
-  font-weight: 600;
-}
-
-.detail-item {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 0.75rem;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid var(--va-background-secondary);
-}
-
-.detail-label {
-  font-weight: 500;
-  color: var(--va-text-secondary);
-}
-
-.detail-value {
-  color: var(--va-text-primary);
-  text-align: right;
-}
-
-.detail-value a {
+/* Utility Functions */
+.getRoleColor {
   color: var(--va-primary);
-  text-decoration: none;
 }
 
-.detail-value a:hover {
-  text-decoration: underline;
+.getStatusColor {
+  color: var(--va-success);
 }
 
-.permissions-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
+/* Responsive Design */
 @media (max-width: 768px) {
-  .page-header-container {
-    padding: 1.5rem;
+  .data-page {
+    padding: var(--spacing-6) var(--spacing-3);
   }
   
-  .header-content {
+  .page-header-container {
+    padding: var(--spacing-8) var(--spacing-6);
+    margin-bottom: var(--spacing-12);
+  }
+  
+  .page-header-content {
     flex-direction: column;
+    gap: var(--spacing-6);
     text-align: center;
-    gap: 1rem;
   }
   
   .page-title {
-    font-size: 2rem;
+    font-size: var(--font-size-4xl);
+  }
+  
+  .page-subtitle {
+    font-size: var(--font-size-base);
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-4);
+  }
+  
+  .charts-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-4);
+  }
+  
+  .chart-bars {
+    height: 150px;
+  }
+  
+  .summary-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-4);
   }
   
   .controls-grid {
     grid-template-columns: 1fr;
+    gap: var(--spacing-4);
   }
   
-  .search-input {
-    grid-column: span 1;
+  .section-header {
+    margin-bottom: var(--spacing-8);
   }
   
-  .form-row {
-    grid-template-columns: 1fr;
+  .section-title {
+    font-size: var(--font-size-3xl);
   }
   
-  .user-details-grid {
-    grid-template-columns: 1fr;
+  .section-subtitle {
+    font-size: var(--font-size-base);
+  }
+}
+
+@media (max-width: 480px) {
+  .page-header-container {
+    padding: var(--spacing-6) var(--spacing-4);
+  }
+  
+  .page-title {
+    font-size: var(--font-size-3xl);
+  }
+  
+  .stat-content {
+    padding: var(--spacing-4);
+  }
+  
+  .chart-content {
+    padding: var(--spacing-4);
+  }
+  
+  .summary-content {
+    padding: var(--spacing-4);
+  }
+  
+  .mock-data-content {
+    padding: var(--spacing-4);
+  }
+  
+  .controls-content {
+    padding: var(--spacing-4);
+  }
+  
+  .activity-content {
+    padding: var(--spacing-4);
+  }
+  
+  .chart-bars {
+    height: 120px;
+    gap: var(--spacing-1);
+  }
+  
+  .bar-label,
+  .bar-value {
+    font-size: 10px;
+  }
+  
+  .control-actions {
+    flex-direction: column;
+  }
+  
+  .control-btn {
+    width: 100%;
   }
 }
 </style>
