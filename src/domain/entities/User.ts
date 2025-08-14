@@ -27,6 +27,10 @@ export interface UserStatus {
   reason?: string
   changedAt: Date
   changedBy?: string
+  isActive(): boolean
+  canLogin(): boolean
+  requiresApproval(): boolean
+  isSuspended(): boolean
 }
 
 export interface User {

@@ -28,7 +28,7 @@
         <va-card-content class="stat-content">
           <div class="stat-icon-wrapper">
             <va-icon
-              :name="stat.icon"
+              :name="getStatIcon(stat.label)"
               size="large"
               :color="stat.color"
             />
@@ -36,25 +36,169 @@
           <div class="stat-info">
             <div class="stat-number">{{ stat.value }}</div>
             <div class="stat-label">{{ stat.label }}</div>
-            <div class="stat-change" v-if="stat.change">
-              <va-icon
-                :name="stat.change > 0 ? 'trending_up' : 'trending_down'"
-                size="small"
-                :color="stat.change > 0 ? 'success' : 'danger'"
-              />
-              <span :class="stat.change > 0 ? 'text-success' : 'text-danger'">
-                {{ Math.abs(stat.change) }}%
-              </span>
-            </div>
+                      <div class="stat-change" v-if="stat.change">
+            <va-icon
+              :name="stat.change > 0 ? 'arrow_upward' : 'arrow_downward'"
+              size="small"
+              :color="stat.change > 0 ? 'success' : 'danger'"
+            />
+            <span :class="stat.change > 0 ? 'text-success' : 'text-danger'">
+              {{ Math.abs(stat.change) }}%
+            </span>
+          </div>
           </div>
         </va-card-content>
       </va-card>
     </div>
 
+    <!-- Mock Chart Data Display -->
+    <va-card class="chart-card mb-6">
+      <va-card-title class="text-h5 mb-3">
+        <va-icon name="insert_chart" class="mr-2" />
+        User Activity Overview
+      </va-card-title>
+      <va-card-content>
+        <div class="chart-grid">
+          <div class="chart-item">
+            <div class="chart-bar" style="height: 80px; background: linear-gradient(135deg, var(--va-primary), var(--va-secondary));">
+              <div class="chart-label">Active Users</div>
+              <div class="chart-value">{{ users.filter((u: User) => u.status.isActive()).length }}</div>
+            </div>
+          </div>
+          <div class="chart-item">
+            <div class="chart-bar" style="height: 60px; background: linear-gradient(135deg, var(--va-warning), var(--va-warning-light));">
+              <div class="chart-label">Pending Users</div>
+              <div class="chart-value">{{ users.filter((u: User) => u.status.requiresApproval()).length }}</div>
+            </div>
+          </div>
+          <div class="chart-item">
+            <div class="chart-bar" style="height: 40px; background: linear-gradient(135deg, var(--va-secondary), var(--va-secondary-light));">
+              <div class="chart-label">Inactive Users</div>
+              <div class="chart-value">{{ users.filter((u: User) => u.status.value === 'inactive').length }}</div>
+            </div>
+          </div>
+          <div class="chart-item">
+            <div class="chart-bar" style="height: 20px; background: linear-gradient(135deg, var(--va-danger), var(--va-danger-light));">
+              <div class="chart-label">Suspended Users</div>
+              <div class="chart-value">{{ users.filter((u: User) => u.status.isSuspended()).length }}</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Additional Chart Info -->
+        <div class="chart-info mt-4">
+          <div class="chart-legend">
+            <div class="legend-item">
+              <div class="legend-color" style="background: var(--va-primary);"></div>
+              <span>Active Users</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color" style="background: var(--va-warning);"></div>
+              <span>Pending Users</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color" style="background: var(--va-secondary);"></div>
+              <span>Inactive Users</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color" style="background: var(--va-danger);"></div>
+              <span>Suspended Users</span>
+            </div>
+          </div>
+        </div>
+      </va-card-content>
+    </va-card>
+
+    <!-- Mock Data Summary -->
+    <va-card class="summary-card mb-6">
+      <va-card-title class="text-h5 mb-3">
+        <va-icon name="info" class="mr-2" />
+        Data Summary & Insights
+      </va-card-title>
+      <va-card-content>
+        <div class="summary-grid">
+          <div class="summary-item">
+            <div class="summary-icon">
+              <va-icon name="group" size="large" color="primary" />
+            </div>
+            <div class="summary-content">
+              <h6>Total Users</h6>
+              <p>{{ users.length }} registered users in the system</p>
+            </div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-icon">
+              <va-icon name="admin_panel_settings" size="large" color="danger" />
+            </div>
+            <div class="summary-content">
+              <h6>Administrators</h6>
+              <p>{{ users.filter((u: User) => u.role.value === 'admin').length }} admin users</p>
+            </div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-icon">
+              <va-icon name="security" size="large" color="warning" />
+            </div>
+            <div class="summary-content">
+              <h6>Moderators</h6>
+              <p>{{ users.filter((u: User) => u.role.value === 'moderator').length }} moderator users</p>
+            </div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-icon">
+              <va-icon name="schedule" size="large" color="info" />
+            </div>
+            <div class="summary-content">
+              <h6>Recent Activity</h6>
+              <p>{{ users.filter((u: User) => u.updatedAt > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)).length }} users updated this week</p>
+            </div>
+          </div>
+        </div>
+      </va-card-content>
+    </va-card>
+
+    <!-- Mock Data Sample Display -->
+    <va-card class="mock-data-card mb-6">
+      <va-card-title class="text-h5 mb-3">
+        <va-icon name="data_usage" class="mr-2" />
+        Sample Data Structure
+      </va-card-title>
+      <va-card-content>
+        <div class="mock-data-grid">
+          <div class="mock-data-item">
+            <h6>User Counts by Role</h6>
+            <div class="mock-data-chart">
+              <div class="mock-bar" style="height: 60px; background: var(--va-danger);">
+                <span>Admin: {{ users.filter((u: User) => u.role.value === 'admin').length }}</span>
+              </div>
+              <div class="mock-bar" style="height: 40px; background: var(--va-warning);">
+                <span>Moderator: {{ users.filter((u: User) => u.role.value === 'moderator').length }}</span>
+              </div>
+              <div class="mock-bar" style="height: 80px; background: var(--va-primary);">
+                <span>User: {{ users.filter((u: User) => u.role.value === 'user').length }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="mock-data-item">
+            <h6>Recent User Activity</h6>
+            <div class="mock-activity-list">
+              <div class="mock-activity" v-for="(user, index) in users.slice(0, 3)" :key="index">
+                <va-icon name="person" size="small" class="mr-2" />
+                <span>{{ user.profile.firstName }} {{ user.profile.lastName }}</span>
+                <va-chip size="small" :color="getStatusColor(user.status.value)">
+                  {{ user.status.value }}
+                </va-chip>
+              </div>
+            </div>
+          </div>
+        </div>
+      </va-card-content>
+    </va-card>
+
     <!-- Data Controls -->
     <va-card class="controls-card mb-6">
       <va-card-title class="text-h5 mb-3">
-        <va-icon name="tune" class="mr-2" />
+        <va-icon name="settings" class="mr-2" />
         Data Controls & Filters
       </va-card-title>
       <va-card-content>
@@ -102,6 +246,41 @@
           >
             Export
           </va-button>
+          <va-button
+            @click="generateReport"
+            variant="outlined"
+            icon="assessment"
+            class="action-button"
+            color="info"
+          >
+            Generate Report
+          </va-button>
+        </div>
+      </va-card-content>
+    </va-card>
+
+    <!-- Recent Activity Mock Data -->
+    <va-card class="activity-card mb-6">
+      <va-card-title class="text-h5 mb-3">
+        <va-icon name="history" class="mr-2" />
+        Recent Activity
+      </va-card-title>
+      <va-card-content>
+        <div class="activity-list">
+          <div class="activity-item" v-for="(activity, index) in recentActivities" :key="index">
+            <div class="activity-icon">
+              <va-icon :name="activity.icon" :color="activity.color" size="small" />
+            </div>
+            <div class="activity-content">
+              <div class="activity-text">{{ activity.text }}</div>
+              <div class="activity-time">{{ activity.time }}</div>
+            </div>
+            <div class="activity-status">
+              <va-chip :color="activity.statusColor" size="small">
+                {{ activity.status }}
+              </va-chip>
+            </div>
+          </div>
         </div>
       </va-card-content>
     </va-card>
@@ -109,7 +288,7 @@
     <!-- Data Table -->
     <va-card class="table-card mb-6">
       <va-card-title class="text-h5 mb-3">
-        <va-icon name="table_chart" class="mr-2" />
+        <va-icon name="table" class="mr-2" />
         Users Management ({{ filteredUsers.length }} users)
       </va-card-title>
       <va-card-content>
@@ -414,6 +593,28 @@
 </template>
 
 <script setup lang="ts">
+/*
+ * DataPage.vue - User Management with Mock Data
+ * 
+ * This page demonstrates data management patterns using Domain-Driven Design principles.
+ * 
+ * MOCK DATA REPLACEMENT GUIDE:
+ * 1. Replace MockUserRepositoryExtended with your real repository implementation
+ * 2. Update the UserService to use your real backend services
+ * 3. Replace mock data arrays (recentActivities, mockAvatars) with real API calls
+ * 4. Update exportData() to create actual CSV/Excel files
+ * 5. Replace mock chart display with real charting library (Chart.js, D3.js, etc.)
+ * 6. Replace CSS-based charts with real charting components (Chart.js, D3.js, ApexCharts, etc.)
+ * 7. Update icon names to match your icon library (Material Icons, Font Awesome, etc.)
+ * 
+ * ICON REPLACEMENT:
+ * - Vuestic UI uses Material Design icons by default
+ * - Common icons: 'person', 'group', 'settings', 'table', 'add', 'edit', 'delete'
+ * - For custom icons, import your icon library and update icon names
+ * 
+ * The current implementation shows the structure and patterns for a real application.
+ */
+
 import { ref, computed, onMounted, watch } from 'vue'
 import { MockUserRepositoryExtended } from '@/infrastructure/repositories/MockUserRepository'
 import { UserService } from '@/application/services/UserService'
@@ -472,6 +673,64 @@ const sortOptions = [
   { text: 'Role', value: 'role' },
   { text: 'Status', value: 'status' },
   { text: 'Created Date', value: 'createdAt' }
+]
+
+// Mock recent activities data
+const recentActivities = ref([
+  {
+    icon: 'add',
+    color: 'success',
+    text: 'New user Emma Wilson registered',
+    time: '2 hours ago',
+    status: 'Completed',
+    statusColor: 'success'
+  },
+  {
+    icon: 'shield',
+    color: 'warning',
+    text: 'User role changed from user to moderator',
+    time: '4 hours ago',
+    status: 'Pending',
+    statusColor: 'warning'
+  },
+  {
+    icon: 'block',
+    color: 'danger',
+    text: 'User account suspended due to policy violation',
+    time: '1 day ago',
+    status: 'Completed',
+    statusColor: 'danger'
+  },
+  {
+    icon: 'check_circle',
+    color: 'success',
+    text: 'User account activated successfully',
+    time: '2 days ago',
+    status: 'Completed',
+    statusColor: 'success'
+  },
+  {
+    icon: 'edit',
+    color: 'info',
+    text: 'User profile updated with new information',
+    time: '3 days ago',
+    status: 'Completed',
+    statusColor: 'info'
+  }
+])
+
+// Mock user avatars for demonstration
+const mockAvatars = [
+  'https://i.pravatar.cc/150?img=1',
+  'https://i.pravatar.cc/150?img=2',
+  'https://i.pravatar.cc/150?img=3',
+  'https://i.pravatar.cc/150?img=4',
+  'https://i.pravatar.cc/150?img=5',
+  'https://i.pravatar.cc/150?img=6',
+  'https://i.pravatar.cc/150?img=7',
+  'https://i.pravatar.cc/150?img=8',
+  'https://i.pravatar.cc/150?img=9',
+  'https://i.pravatar.cc/150?img=10'
 ]
 
 // Table columns
@@ -559,28 +818,24 @@ const statistics = computed(() => [
   {
     label: 'Total Users',
     value: users.value.length,
-    icon: 'people',
     color: 'primary',
     change: 12
   },
   {
     label: 'Active Users',
-    value: users.value.filter(u => u.status.isActive()).length,
-    icon: 'check_circle',
+    value: users.value.filter((u: User) => u.status.isActive()).length,
     color: 'success',
     change: 8
   },
   {
     label: 'Pending Users',
-    value: users.value.filter(u => u.status.requiresApproval()).length,
-    icon: 'pending',
+    value: users.value.filter((u: User) => u.status.requiresApproval()).length,
     color: 'warning',
     change: -5
   },
   {
     label: 'Suspended Users',
-    value: users.value.filter(u => u.status.isSuspended()).length,
-    icon: 'block',
+    value: users.value.filter((u: User) => u.status.isSuspended()).length,
     color: 'danger',
     change: 2
   }
@@ -705,9 +960,71 @@ const resetUserForm = () => {
 const exportData = () => {
   // In a real app, this would export to CSV/Excel
   console.log('Exporting data...')
+  
+  // Mock export functionality for demonstration
+  const exportData = {
+    users: users.value.map(user => ({
+      id: user.id.value,
+      name: `${user.profile.firstName} ${user.profile.lastName}`,
+      email: user.email.value,
+      role: user.role.value,
+      status: user.status.value,
+      created: user.createdAt.toISOString(),
+      permissions: user.role.permissions
+    })),
+    exportDate: new Date().toISOString(),
+    totalUsers: users.value.length
+  }
+  
+  // In a real app, this would create and download a file
+  console.log('Export data:', exportData)
+  alert(`Exported ${exportData.totalUsers} users. Check console for data structure.`)
+}
+
+const generateReport = () => {
+  // In a real app, this would generate a comprehensive report
+  console.log('Generating report...')
+  
+  // Mock report data for demonstration
+  const reportData = {
+    generatedAt: new Date().toISOString(),
+    summary: {
+      totalUsers: users.value.length,
+      activeUsers: users.value.filter((u: User) => u.status.isActive()).length,
+      pendingUsers: users.value.filter((u: User) => u.status.requiresApproval()).length,
+      suspendedUsers: users.value.filter((u: User) => u.status.isSuspended()).length
+    },
+    userBreakdown: {
+      byRole: {
+        admin: users.value.filter((u: User) => u.role.value === 'admin').length,
+        moderator: users.value.filter((u: User) => u.role.value === 'moderator').length,
+        user: users.value.filter((u: User) => u.role.value === 'user').length
+      },
+      byStatus: {
+        active: users.value.filter((u: User) => u.status.value === 'active').length,
+        pending: users.value.filter((u: User) => u.status.value === 'pending').length,
+        inactive: users.value.filter((u: User) => u.status.value === 'inactive').length,
+        suspended: users.value.filter((u: User) => u.status.value === 'suspended').length
+      }
+    },
+    recentActivity: recentActivities.value.slice(0, 5)
+  }
+  
+  console.log('Generated Report:', reportData)
+  alert(`Report generated successfully!\n\nTotal Users: ${reportData.summary.totalUsers}\nActive Users: ${reportData.summary.activeUsers}\nCheck console for full report data.`)
 }
 
 // Utility methods
+const getStatIcon = (label: string) => {
+  switch (label) {
+    case 'Total Users': return 'group'
+    case 'Active Users': return 'check_circle'
+    case 'Pending Users': return 'schedule'
+    case 'Suspended Users': return 'block'
+    default: return 'person'
+  }
+}
+
 const getRoleColor = (role: string) => {
   switch (role) {
     case 'admin': return 'danger'
@@ -800,6 +1117,192 @@ onMounted(() => {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1.5rem;
+}
+
+.chart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  align-items: end;
+}
+
+.chart-item {
+  text-align: center;
+}
+
+.chart-bar {
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0.5rem;
+  color: white;
+  font-weight: 600;
+  min-height: 60px;
+  position: relative;
+}
+
+.chart-label {
+  font-size: 0.8rem;
+  margin-bottom: 0.25rem;
+  text-align: center;
+}
+
+.chart-value {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.chart-info {
+  margin-top: 2rem;
+}
+
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 2px solid var(--va-background-secondary);
+}
+
+.mock-data-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.mock-data-item h6 {
+  margin: 0 0 1rem 0;
+  color: var(--va-text-primary);
+  font-weight: 600;
+}
+
+.mock-data-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mock-bar {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  color: white;
+  font-weight: 500;
+  border-radius: 4px;
+  min-height: 40px;
+}
+
+.mock-activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.mock-activity {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  border: 1px solid var(--va-background-secondary);
+  border-radius: 6px;
+  background: var(--va-background-primary);
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.summary-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 1rem;
+  border: 1px solid var(--va-background-secondary);
+  border-radius: 8px;
+  background: var(--va-background-primary);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.summary-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.summary-icon {
+  margin-right: 1rem;
+  flex-shrink: 0;
+}
+
+.summary-content h6 {
+  margin: 0 0 0.5rem 0;
+  color: var(--va-text-primary);
+  font-weight: 600;
+}
+
+.summary-content p {
+  margin: 0;
+  color: var(--va-text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border: 1px solid var(--va-background-secondary);
+  border-radius: 8px;
+  background: var(--va-background-primary);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.activity-item:hover {
+  transform: translateX(4px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.activity-icon {
+  margin-right: 1rem;
+  flex-shrink: 0;
+}
+
+.activity-content {
+  flex: 1;
+}
+
+.activity-text {
+  font-weight: 500;
+  color: var(--va-text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.activity-time {
+  font-size: 0.8rem;
+  color: var(--va-text-secondary);
+}
+
+.activity-status {
+  flex-shrink: 0;
 }
 
 .stat-card {
