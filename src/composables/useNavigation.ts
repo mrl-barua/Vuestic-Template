@@ -5,6 +5,8 @@ export interface NavigationItem {
   path: string
   icon?: string
   description?: string
+  badge?: string | number
+  children?: NavigationItem[]
 }
 
 export function useNavigation() {
@@ -14,6 +16,13 @@ export function useNavigation() {
       path: '/',
       icon: 'home',
       description: 'Welcome page with overview'
+    },
+    {
+      name: 'Dashboard',
+      path: '/dashboard',
+      icon: 'dashboard',
+      description: 'Real-time application overview',
+      badge: 'New'
     },
     {
       name: 'Components',
@@ -53,10 +62,27 @@ export function useNavigation() {
     }
   }
 
+  const getNavItemByPath = (path: string): NavigationItem | undefined => {
+    return navItems.value.find(item => item.path === path)
+  }
+
+  const getBreadcrumbs = (currentPath: string): NavigationItem[] => {
+    const breadcrumbs: NavigationItem[] = []
+    const currentItem = getNavItemByPath(currentPath)
+    
+    if (currentItem) {
+      breadcrumbs.push(currentItem)
+    }
+    
+    return breadcrumbs
+  }
+
   return {
     navItems,
     addNavItem,
     removeNavItem,
-    updateNavItem
+    updateNavItem,
+    getNavItemByPath,
+    getBreadcrumbs
   }
 }
