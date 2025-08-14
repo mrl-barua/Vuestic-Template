@@ -1,8 +1,8 @@
 <template>
   <div class="data-page">
     <!-- Page Header -->
-    <va-card class="page-header mb-6">
-      <va-card-content class="header-content">
+    <div class="page-header-container mb-8">
+      <div class="header-content">
         <div class="header-text">
           <h1 class="page-title">Data Management & State</h1>
           <p class="page-subtitle">
@@ -15,142 +15,96 @@
             variant="outlined"
             icon="refresh"
             :loading="isLoading"
+            class="refresh-button"
           >
             Refresh Data
           </va-button>
         </div>
-      </va-card-content>
-    </va-card>
+      </div>
+    </div>
 
     <!-- Statistics Overview -->
-    <div class="stats-overview mb-6">
+    <div class="stats-overview mb-8">
       <va-card class="stat-card" v-for="stat in statistics" :key="stat.label">
         <va-card-content class="stat-content">
           <div class="stat-icon-wrapper">
-            <va-icon
-              :name="getStatIcon(stat.label)"
-              size="large"
-              :color="stat.color"
-            />
+            <div class="stat-icon-background" :style="{ backgroundColor: getStatColor(stat.label) + '15' }">
+              <va-icon
+                :name="getStatIcon(stat.label)"
+                size="large"
+                :color="getStatColor(stat.label)"
+              />
+            </div>
           </div>
           <div class="stat-info">
             <div class="stat-number">{{ stat.value }}</div>
             <div class="stat-label">{{ stat.label }}</div>
-                      <div class="stat-change" v-if="stat.change">
-            <va-icon
-              :name="stat.change > 0 ? 'arrow_upward' : 'arrow_downward'"
-              size="small"
-              :color="stat.change > 0 ? 'success' : 'danger'"
-            />
-            <span :class="stat.change > 0 ? 'text-success' : 'text-danger'">
-              {{ Math.abs(stat.change) }}%
-            </span>
-          </div>
+            <div class="stat-change" v-if="stat.change">
+              <va-icon
+                :name="stat.change > 0 ? 'arrow_upward' : 'arrow_downward'"
+                size="small"
+                :color="stat.change > 0 ? 'success' : 'danger'"
+              />
+              <span :class="stat.change > 0 ? 'text-success' : 'text-danger'">
+                {{ Math.abs(stat.change) }}%
+              </span>
+            </div>
           </div>
         </va-card-content>
       </va-card>
     </div>
 
     <!-- Mock Chart Data Display -->
-    <va-card class="chart-card mb-6">
-      <va-card-title class="text-h5 mb-3">
-        <va-icon name="insert_chart" class="mr-2" />
-        User Activity Overview
+    <va-card class="chart-card mb-8">
+      <va-card-title class="chart-title">
+        <div class="title-content">
+          <div class="title-icon">
+            <va-icon name="insert_chart" />
+          </div>
+          <h2>User Activity Overview</h2>
+        </div>
       </va-card-title>
-      <va-card-content>
+      <va-card-content class="chart-content">
         <div class="chart-grid">
-          <div class="chart-item">
-            <div class="chart-bar" style="height: 80px; background: linear-gradient(135deg, var(--va-primary), var(--va-secondary));">
-              <div class="chart-label">Active Users</div>
-              <div class="chart-value">{{ users.filter((u: User) => u.status.isActive()).length }}</div>
-            </div>
-          </div>
-          <div class="chart-item">
-            <div class="chart-bar" style="height: 60px; background: linear-gradient(135deg, var(--va-warning), var(--va-warning-light));">
-              <div class="chart-label">Pending Users</div>
-              <div class="chart-value">{{ users.filter((u: User) => u.status.requiresApproval()).length }}</div>
-            </div>
-          </div>
-          <div class="chart-item">
-            <div class="chart-bar" style="height: 40px; background: linear-gradient(135deg, var(--va-secondary), var(--va-secondary-light));">
-              <div class="chart-label">Inactive Users</div>
-              <div class="chart-value">{{ users.filter((u: User) => u.status.value === 'inactive').length }}</div>
-            </div>
-          </div>
-          <div class="chart-item">
-            <div class="chart-bar" style="height: 20px; background: linear-gradient(135deg, var(--va-danger), var(--va-danger-light));">
-              <div class="chart-label">Suspended Users</div>
-              <div class="chart-value">{{ users.filter((u: User) => u.status.isSuspended()).length }}</div>
+          <div class="chart-item" v-for="(item, index) in chartData" :key="index">
+            <div class="chart-bar" :style="getChartBarStyle(item)">
+              <div class="chart-label">{{ item.label }}</div>
+              <div class="chart-value">{{ item.value }}</div>
             </div>
           </div>
         </div>
         
-        <!-- Additional Chart Info -->
-        <div class="chart-info mt-4">
-          <div class="chart-legend">
-            <div class="legend-item">
-              <div class="legend-color" style="background: var(--va-primary);"></div>
-              <span>Active Users</span>
-            </div>
-            <div class="legend-item">
-              <div class="legend-color" style="background: var(--va-warning);"></div>
-              <span>Pending Users</span>
-            </div>
-            <div class="legend-item">
-              <div class="legend-color" style="background: var(--va-secondary);"></div>
-              <span>Inactive Users</span>
-            </div>
-            <div class="legend-item">
-              <div class="legend-color" style="background: var(--va-danger);"></div>
-              <span>Suspended Users</span>
-            </div>
+        <!-- Chart Legend -->
+        <div class="chart-legend">
+          <div class="legend-item" v-for="(item, index) in chartData" :key="index">
+            <div class="legend-color" :style="{ backgroundColor: item.color }"></div>
+            <span>{{ item.label }}</span>
           </div>
         </div>
       </va-card-content>
     </va-card>
 
     <!-- Mock Data Summary -->
-    <va-card class="summary-card mb-6">
-      <va-card-title class="text-h5 mb-3">
-        <va-icon name="info" class="mr-2" />
-        Data Summary & Insights
+    <va-card class="summary-card mb-8">
+      <va-card-title class="summary-title">
+        <div class="title-content">
+          <div class="title-icon">
+            <va-icon name="info" />
+          </div>
+          <h2>Data Summary & Insights</h2>
+        </div>
       </va-card-title>
-      <va-card-content>
+      <va-card-content class="summary-content">
         <div class="summary-grid">
-          <div class="summary-item">
+          <div class="summary-item" v-for="(item, index) in summaryItems" :key="index">
             <div class="summary-icon">
-              <va-icon name="group" size="large" color="primary" />
+              <div class="icon-background" :style="{ backgroundColor: item.iconColor + '15' }">
+                <va-icon :name="item.icon" size="large" :color="item.iconColor" />
+              </div>
             </div>
             <div class="summary-content">
-              <h6>Total Users</h6>
-              <p>{{ users.length }} registered users in the system</p>
-            </div>
-          </div>
-          <div class="summary-item">
-            <div class="summary-icon">
-              <va-icon name="admin_panel_settings" size="large" color="danger" />
-            </div>
-            <div class="summary-content">
-              <h6>Administrators</h6>
-              <p>{{ users.filter((u: User) => u.role.value === 'admin').length }} admin users</p>
-            </div>
-          </div>
-          <div class="summary-item">
-            <div class="summary-icon">
-              <va-icon name="security" size="large" color="warning" />
-            </div>
-            <div class="summary-content">
-              <h6>Moderators</h6>
-              <p>{{ users.filter((u: User) => u.role.value === 'moderator').length }} moderator users</p>
-            </div>
-          </div>
-          <div class="summary-item">
-            <div class="summary-icon">
-              <va-icon name="schedule" size="large" color="info" />
-            </div>
-            <div class="summary-content">
-              <h6>Recent Activity</h6>
-              <p>{{ users.filter((u: User) => u.updatedAt > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)).length }} users updated this week</p>
+              <h6>{{ item.title }}</h6>
+              <p>{{ item.description }}</p>
             </div>
           </div>
         </div>
@@ -158,12 +112,16 @@
     </va-card>
 
     <!-- Mock Data Sample Display -->
-    <va-card class="mock-data-card mb-6">
-      <va-card-title class="text-h5 mb-3">
-        <va-icon name="data_usage" class="mr-2" />
-        Sample Data Structure
+    <va-card class="mock-data-card mb-8">
+      <va-card-title class="mock-data-title">
+        <div class="title-content">
+          <div class="title-icon">
+            <va-icon name="data_usage" />
+          </div>
+          <h2>Sample Data Structure</h2>
+        </div>
       </va-card-title>
-      <va-card-content>
+      <va-card-content class="mock-data-content">
         <div class="mock-data-grid">
           <div class="mock-data-item">
             <h6>User Counts by Role</h6>
@@ -196,12 +154,16 @@
     </va-card>
 
     <!-- Data Controls -->
-    <va-card class="controls-card mb-6">
-      <va-card-title class="text-h5 mb-3">
-        <va-icon name="settings" class="mr-2" />
-        Data Controls & Filters
+    <va-card class="controls-card mb-8">
+      <va-card-title class="controls-title">
+        <div class="title-content">
+          <div class="title-icon">
+            <va-icon name="settings" />
+          </div>
+          <h2>Data Controls & Filters</h2>
+        </div>
       </va-card-title>
-      <va-card-content>
+      <va-card-content class="controls-content">
         <div class="controls-grid">
           <va-input
             v-model="searchQuery"
@@ -260,16 +222,22 @@
     </va-card>
 
     <!-- Recent Activity Mock Data -->
-    <va-card class="activity-card mb-6">
-      <va-card-title class="text-h5 mb-3">
-        <va-icon name="history" class="mr-2" />
-        Recent Activity
+    <va-card class="activity-card mb-8">
+      <va-card-title class="activity-title">
+        <div class="title-content">
+          <div class="title-icon">
+            <va-icon name="history" />
+          </div>
+          <h2>Recent Activity</h2>
+        </div>
       </va-card-title>
-      <va-card-content>
+      <va-card-content class="activity-content">
         <div class="activity-list">
           <div class="activity-item" v-for="(activity, index) in recentActivities" :key="index">
             <div class="activity-icon">
-              <va-icon :name="activity.icon" :color="activity.color" size="small" />
+              <div class="icon-background" :style="{ backgroundColor: activity.color + '15' }">
+                <va-icon :name="activity.icon" :color="activity.color" size="small" />
+              </div>
             </div>
             <div class="activity-content">
               <div class="activity-text">{{ activity.text }}</div>
@@ -286,12 +254,16 @@
     </va-card>
 
     <!-- Data Table -->
-    <va-card class="table-card mb-6">
-      <va-card-title class="text-h5 mb-3">
-        <va-icon name="table" class="mr-2" />
-        Users Management ({{ filteredUsers.length }} users)
+    <va-card class="table-card mb-8">
+      <va-card-title class="table-title">
+        <div class="title-content">
+          <div class="title-icon">
+            <va-icon name="table" />
+          </div>
+          <h2>Users Management ({{ filteredUsers.length }} users)</h2>
+        </div>
       </va-card-title>
-      <va-card-content>
+      <va-card-content class="table-content">
         <va-data-table
           :items="paginatedUsers"
           :columns="tableColumns"
@@ -719,6 +691,62 @@ const recentActivities = ref([
   }
 ])
 
+// Chart data for user activity overview
+const chartData = computed(() => [
+  {
+    label: 'Active Users',
+    value: users.value.filter((u: User) => u.status.isActive()).length,
+    color: 'var(--va-primary)',
+    height: 80
+  },
+  {
+    label: 'Pending Users',
+    value: users.value.filter((u: User) => u.status.requiresApproval()).length,
+    color: 'var(--va-warning)',
+    height: 60
+  },
+  {
+    label: 'Inactive Users',
+    value: users.value.filter((u: User) => u.status.value === 'inactive').length,
+    color: 'var(--va-secondary)',
+    height: 40
+  },
+  {
+    label: 'Suspended Users',
+    value: users.value.filter((u: User) => u.status.isSuspended()).length,
+    color: 'var(--va-danger)',
+    height: 20
+  }
+])
+
+// Summary items for data insights
+const summaryItems = computed(() => [
+  {
+    title: 'Total Users',
+    description: `${users.value.length} registered users in the system`,
+    icon: 'group',
+    iconColor: 'var(--va-primary)'
+  },
+  {
+    title: 'Administrators',
+    description: `${users.value.filter((u: User) => u.role.value === 'admin').length} admin users`,
+    icon: 'admin_panel_settings',
+    iconColor: 'var(--va-danger)'
+  },
+  {
+    title: 'Moderators',
+    description: `${users.value.filter((u: User) => u.role.value === 'moderator').length} moderator users`,
+    icon: 'security',
+    iconColor: 'var(--va-warning)'
+  },
+  {
+    title: 'Recent Activity',
+    description: `${users.value.filter((u: User) => u.updatedAt > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)).length} users updated this week`,
+    icon: 'schedule',
+    iconColor: 'var(--va-info)'
+  }
+])
+
 // Mock user avatars for demonstration
 const mockAvatars = [
   'https://i.pravatar.cc/150?img=1',
@@ -1025,12 +1053,40 @@ const getStatIcon = (label: string) => {
   }
 }
 
+const getStatColor = (label: string) => {
+  switch (label) {
+    case 'Total Users': return 'var(--va-primary)'
+    case 'Active Users': return 'var(--va-success)'
+    case 'Pending Users': return 'var(--va-warning)'
+    case 'Suspended Users': return 'var(--va-danger)'
+    default: return 'var(--va-primary)'
+  }
+}
+
+const getChartBarStyle = (item: any) => {
+  return {
+    height: `${item.height}px`,
+    background: `linear-gradient(135deg, ${item.color}, ${item.color}dd)`,
+    borderRadius: '8px 8px 0 0',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    padding: '0.5rem',
+    color: 'white',
+    fontWeight: '600',
+    minHeight: '60px',
+    position: 'relative',
+    transition: 'height 0.3s ease'
+  }
+}
+
 const getRoleColor = (role: string) => {
   switch (role) {
-    case 'admin': return 'danger'
-    case 'moderator': return 'warning'
-    case 'user': return 'primary'
-    default: return 'secondary'
+    case 'admin': return 'var(--va-danger)'
+    case 'moderator': return 'var(--va-warning)'
+    case 'user': return 'var(--va-primary)'
+    default: return 'var(--va-secondary)'
   }
 }
 
@@ -1045,11 +1101,11 @@ const getRoleIcon = (role: string) => {
 
 const getStatusColor = (status: string) => {
   switch (status) {
-    case 'active': return 'success'
-    case 'pending': return 'warning'
-    case 'inactive': return 'secondary'
-    case 'suspended': return 'danger'
-    default: return 'secondary'
+    case 'active': return 'var(--va-success)'
+    case 'pending': return 'var(--va-warning)'
+    case 'inactive': return 'var(--va-secondary)'
+    case 'suspended': return 'var(--va-danger)'
+    default: return 'var(--va-secondary)'
   }
 }
 
@@ -1089,40 +1145,156 @@ onMounted(() => {
   padding: 1rem 0;
 }
 
-.page-header {
+.page-header-container {
   background: linear-gradient(135deg, var(--va-primary) 0%, var(--va-secondary) 100%);
   color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  margin-bottom: 2rem;
 }
 
 .header-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 2rem;
 }
 
 .page-title {
-  font-size: 2.5rem;
+  font-size: 2.8rem;
   font-weight: 700;
   margin: 0 0 0.5rem 0;
+  color: white;
 }
 
 .page-subtitle {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   opacity: 0.9;
   margin: 0;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.refresh-button {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  border-color: white;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.refresh-button:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-color: white;
 }
 
 .stats-overview {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 1.5rem;
+}
+
+.stat-card {
+  background: var(--va-background-primary);
+  border: 1px solid var(--va-background-secondary);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.stat-content {
+  display: flex;
+  align-items: center;
+  padding: 1.5rem;
+  gap: 1rem;
+}
+
+.stat-icon-wrapper {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 15px;
+  background-color: var(--va-background-secondary);
+}
+
+.stat-icon-background {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background-color: var(--va-background-primary);
+}
+
+.stat-number {
+  font-size: 2.2rem;
+  font-weight: bold;
+  color: var(--va-primary);
+  margin-bottom: 0.25rem;
+}
+
+.stat-label {
+  color: var(--va-text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.stat-change {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+}
+
+.chart-card {
+  background: var(--va-background-primary);
+  border: 1px solid var(--va-background-secondary);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.chart-title {
+  display: flex;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--va-background-secondary);
+}
+
+.title-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.title-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background-color: var(--va-background-secondary);
+}
+
+.chart-content {
+  padding: 1.5rem;
 }
 
 .chart-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1.25rem;
   align-items: end;
 }
 
@@ -1141,28 +1313,32 @@ onMounted(() => {
   font-weight: 600;
   min-height: 60px;
   position: relative;
+  transition: height 0.3s ease;
+}
+
+.chart-bar:hover {
+  height: 70px; /* Slightly taller on hover */
 }
 
 .chart-label {
   font-size: 0.8rem;
   margin-bottom: 0.25rem;
   text-align: center;
+  color: var(--va-text-secondary);
 }
 
 .chart-value {
   font-size: 1.2rem;
   font-weight: bold;
-}
-
-.chart-info {
-  margin-top: 2rem;
+  color: var(--va-primary);
 }
 
 .chart-legend {
   display: flex;
-  flex-wrap: wrap;
-  gap: 1.5rem;
   justify-content: center;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  padding: 0 1.5rem;
 }
 
 .legend-item {
@@ -1176,6 +1352,25 @@ onMounted(() => {
   height: 16px;
   border-radius: 4px;
   border: 2px solid var(--va-background-secondary);
+}
+
+.mock-data-card {
+  background: var(--va-background-primary);
+  border: 1px solid var(--va-background-secondary);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.mock-data-title {
+  display: flex;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--va-background-secondary);
+}
+
+.mock-data-content {
+  padding: 1.5rem;
 }
 
 .mock-data-grid {
@@ -1221,6 +1416,25 @@ onMounted(() => {
   background: var(--va-background-primary);
 }
 
+.summary-card {
+  background: var(--va-background-primary);
+  border: 1px solid var(--va-background-secondary);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.summary-title {
+  display: flex;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--va-background-secondary);
+}
+
+.summary-content {
+  padding: 1.5rem;
+}
+
 .summary-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -1247,6 +1461,16 @@ onMounted(() => {
   flex-shrink: 0;
 }
 
+.icon-background {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background-color: var(--va-background-secondary);
+}
+
 .summary-content h6 {
   margin: 0 0 0.5rem 0;
   color: var(--va-text-primary);
@@ -1258,6 +1482,25 @@ onMounted(() => {
   color: var(--va-text-secondary);
   font-size: 0.9rem;
   line-height: 1.4;
+}
+
+.activity-card {
+  background: var(--va-background-primary);
+  border: 1px solid var(--va-background-secondary);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.activity-title {
+  display: flex;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--va-background-secondary);
+}
+
+.activity-content {
+  padding: 1.5rem;
 }
 
 .activity-list {
@@ -1305,43 +1548,23 @@ onMounted(() => {
   flex-shrink: 0;
 }
 
-.stat-card {
-  transition: transform 0.2s, box-shadow 0.2s;
+.controls-card {
+  background: var(--va-background-primary);
+  border: 1px solid var(--va-background-secondary);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
 }
 
-.stat-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-}
-
-.stat-content {
+.controls-title {
   display: flex;
   align-items: center;
   padding: 1.5rem;
+  border-bottom: 1px solid var(--va-background-secondary);
 }
 
-.stat-icon-wrapper {
-  margin-right: 1rem;
-}
-
-.stat-number {
-  font-size: 2rem;
-  font-weight: bold;
-  color: var(--va-primary);
-  margin-bottom: 0.25rem;
-}
-
-.stat-label {
-  color: var(--va-text-secondary);
-  font-size: 0.9rem;
-  margin-bottom: 0.5rem;
-}
-
-.stat-change {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  font-size: 0.8rem;
+.controls-content {
+  padding: 1.5rem;
 }
 
 .controls-grid {
@@ -1361,6 +1584,18 @@ onMounted(() => {
 
 .action-button {
   min-width: 120px;
+  background-color: var(--va-primary);
+  color: white;
+  border-color: var(--va-primary);
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.action-button:hover {
+  background-color: var(--va-primary-dark);
+  border-color: var(--va-primary-dark);
 }
 
 .data-table {
@@ -1405,6 +1640,18 @@ onMounted(() => {
 
 .action-btn {
   min-width: auto;
+  background-color: var(--va-info);
+  color: white;
+  border-color: var(--va-info);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.action-btn:hover {
+  background-color: var(--va-info-dark);
+  border-color: var(--va-info-dark);
 }
 
 .pagination-info {
@@ -1522,6 +1769,10 @@ onMounted(() => {
 }
 
 @media (max-width: 768px) {
+  .page-header-container {
+    padding: 1.5rem;
+  }
+  
   .header-content {
     flex-direction: column;
     text-align: center;

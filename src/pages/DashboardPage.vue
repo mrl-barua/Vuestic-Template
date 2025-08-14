@@ -1,8 +1,8 @@
 <template>
   <div class="dashboard-page">
     <!-- Page Header -->
-    <va-card class="page-header mb-6">
-      <va-card-content class="header-content">
+    <div class="page-header-container mb-8">
+      <div class="header-content">
         <div class="header-text">
           <h1 class="page-title">Dashboard</h1>
           <p class="page-subtitle">
@@ -15,23 +15,26 @@
             variant="outlined"
             icon="refresh"
             :loading="isLoading"
+            class="refresh-button"
           >
             Refresh
           </va-button>
         </div>
-      </va-card-content>
-    </va-card>
+      </div>
+    </div>
 
     <!-- Key Metrics -->
-    <div class="metrics-grid mb-6">
+    <div class="metrics-grid mb-8">
       <va-card class="metric-card" v-for="metric in keyMetrics" :key="metric.label">
         <va-card-content class="metric-content">
           <div class="metric-icon">
-            <va-icon
-              :name="metric.icon"
-              size="large"
-              :color="metric.color"
-            />
+            <div class="icon-background" :style="{ backgroundColor: metric.color + '15' }">
+              <va-icon
+                :name="metric.icon"
+                size="large"
+                :color="metric.color"
+              />
+            </div>
           </div>
           <div class="metric-info">
             <div class="metric-value">{{ metric.value }}</div>
@@ -53,15 +56,19 @@
     </div>
 
     <!-- Charts Section -->
-    <div class="charts-section mb-6">
+    <div class="charts-section mb-8">
       <div class="charts-grid">
         <!-- User Activity Chart -->
         <va-card class="chart-card">
-          <va-card-title class="text-h6 mb-3">
-            <va-icon name="analytics" class="mr-2" />
-            User Activity
+          <va-card-title class="chart-title">
+            <div class="title-content">
+              <div class="title-icon">
+                <va-icon name="analytics" />
+              </div>
+              <h2>User Activity</h2>
+            </div>
           </va-card-title>
-          <va-card-content>
+          <va-card-content class="chart-content">
             <div class="chart-container">
               <div class="chart-placeholder">
                 <va-icon name="bar_chart" size="x-large" color="primary" />
@@ -74,11 +81,15 @@
 
         <!-- System Health Chart -->
         <va-card class="chart-card">
-          <va-card-title class="text-h6 mb-3">
-            <va-icon name="monitor_heart" class="mr-2" />
-            System Health
+          <va-card-title class="chart-title">
+            <div class="title-content">
+              <div class="title-icon">
+                <va-icon name="monitor_heart" />
+              </div>
+              <h2>System Health</h2>
+            </div>
           </va-card-title>
-          <va-card-content>
+          <va-card-content class="chart-content">
             <div class="chart-container">
               <div class="chart-placeholder">
                 <va-icon name="pie_chart" size="x-large" color="success" />
@@ -92,37 +103,29 @@
     </div>
 
     <!-- Recent Activity -->
-    <va-card class="activity-card mb-6">
-      <va-card-title class="text-h6 mb-3">
-        <va-icon name="history" class="mr-2" />
-        Recent Activity
+    <va-card class="activity-card mb-8">
+      <va-card-title class="activity-title">
+        <div class="title-content">
+          <div class="title-icon">
+            <va-icon name="history" />
+          </div>
+          <h2>Recent Activity</h2>
+        </div>
       </va-card-title>
-      <va-card-content>
+      <va-card-content class="activity-content">
         <div class="activity-list">
-          <div
-            v-for="activity in recentActivities"
-            :key="activity.id"
-            class="activity-item"
-          >
+          <div class="activity-item" v-for="(activity, index) in recentActivities" :key="index">
             <div class="activity-icon">
-              <va-icon
-                :name="activity.icon"
-                :color="activity.color"
-                size="small"
-              />
+              <div class="icon-background" :style="{ backgroundColor: activity.color + '15' }">
+                <va-icon :name="activity.icon" :color="activity.color" size="small" />
+              </div>
             </div>
             <div class="activity-content">
               <div class="activity-text">{{ activity.text }}</div>
-              <div class="activity-meta">
-                <span class="activity-user">{{ activity.user }}</span>
-                <span class="activity-time">{{ formatTime(activity.timestamp) }}</span>
-              </div>
+              <div class="activity-time">{{ activity.time }}</div>
             </div>
             <div class="activity-status">
-              <va-chip
-                :color="activity.statusColor"
-                size="small"
-              >
+              <va-chip :color="activity.statusColor" size="small">
                 {{ activity.status }}
               </va-chip>
             </div>
@@ -132,21 +135,25 @@
     </va-card>
 
     <!-- Quick Actions -->
-    <va-card class="actions-card">
-      <va-card-title class="text-h6 mb-3">
-        <va-icon name="flash_on" class="mr-2" />
-        Quick Actions
+    <va-card class="actions-card mb-8">
+      <va-card-title class="actions-title">
+        <div class="title-content">
+          <div class="title-icon">
+            <va-icon name="flash_on" />
+          </div>
+          <h2>Quick Actions</h2>
+        </div>
       </va-card-title>
-      <va-card-content>
+      <va-card-content class="actions-content">
         <div class="actions-grid">
           <va-button
             v-for="action in quickActions"
             :key="action.label"
             :color="action.color"
-            :variant="action.variant"
             :icon="action.icon"
-            @click="action.handler"
+            variant="outlined"
             class="action-button"
+            @click="action.handler"
           >
             {{ action.label }}
           </va-button>
@@ -197,50 +204,40 @@ const keyMetrics = ref([
 
 const recentActivities = ref([
   {
-    id: 1,
     text: 'New user registration completed',
-    user: 'john.doe@example.com',
-    timestamp: new Date(Date.now() - 5 * 60 * 1000),
+    time: '5 minutes ago',
     icon: 'person_add',
     color: 'success',
     status: 'Completed',
     statusColor: 'success'
   },
   {
-    id: 2,
     text: 'Database backup initiated',
-    user: 'System',
-    timestamp: new Date(Date.now() - 15 * 60 * 1000),
+    time: '15 minutes ago',
     icon: 'backup',
     color: 'info',
     status: 'In Progress',
     statusColor: 'warning'
   },
   {
-    id: 3,
     text: 'Security scan completed',
-    user: 'Security Bot',
-    timestamp: new Date(Date.now() - 30 * 60 * 1000),
+    time: '30 minutes ago',
     icon: 'security',
     color: 'success',
     status: 'Completed',
     statusColor: 'success'
   },
   {
-    id: 4,
     text: 'Performance optimization applied',
-    user: 'DevOps Team',
-    timestamp: new Date(Date.now() - 45 * 60 * 1000),
+    time: '45 minutes ago',
     icon: 'tune',
     color: 'primary',
     status: 'Completed',
     statusColor: 'success'
   },
   {
-    id: 5,
     text: 'API rate limit exceeded',
-    user: 'api.gateway',
-    timestamp: new Date(Date.now() - 60 * 60 * 1000),
+    time: '1 hour ago',
     icon: 'warning',
     color: 'warning',
     status: 'Resolved',
@@ -252,29 +249,25 @@ const quickActions = ref([
   {
     label: 'Add User',
     icon: 'person_add',
-    color: 'success',
-    variant: 'default',
+    color: 'primary',
     handler: () => router.push('/data')
   },
   {
     label: 'View Reports',
     icon: 'assessment',
-    color: 'primary',
-    variant: 'outlined',
+    color: 'success',
     handler: () => console.log('View Reports clicked')
   },
   {
     label: 'System Settings',
     icon: 'settings',
-    color: 'secondary',
-    variant: 'outlined',
+    color: 'warning',
     handler: () => console.log('System Settings clicked')
   },
   {
     label: 'Export Data',
     icon: 'download',
     color: 'info',
-    variant: 'outlined',
     handler: () => console.log('Export Data clicked')
   }
 ])
@@ -293,18 +286,7 @@ const refreshDashboard = async () => {
   }
 }
 
-const formatTime = (timestamp: Date) => {
-  const now = new Date()
-  const diff = now.getTime() - timestamp.getTime()
-  const minutes = Math.floor(diff / (1000 * 60))
-  const hours = Math.floor(diff / (1000 * 60 * 60))
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24))
 
-  if (minutes < 1) return 'Just now'
-  if (minutes < 60) return `${minutes}m ago`
-  if (hours < 24) return `${hours}h ago`
-  return `${days}d ago`
-}
 
 // Lifecycle
 onMounted(() => {
@@ -317,16 +299,19 @@ onMounted(() => {
   padding: 1rem 0;
 }
 
-.page-header {
+.page-header-container {
   background: linear-gradient(135deg, var(--va-primary) 0%, var(--va-secondary) 100%);
   color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  margin-bottom: 2rem;
 }
 
 .header-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 2rem;
 }
 
 .page-title {
@@ -341,6 +326,17 @@ onMounted(() => {
   margin: 0;
 }
 
+.refresh-button {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  border-color: white;
+  transition: background-color 0.3s ease;
+}
+
+.refresh-button:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
 .metrics-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -349,11 +345,14 @@ onMounted(() => {
 
 .metric-card {
   transition: transform 0.2s, box-shadow 0.2s;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
 }
 
 .metric-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
 }
 
 .metric-content {
@@ -363,6 +362,16 @@ onMounted(() => {
 }
 
 .metric-icon {
+  margin-right: 1rem;
+}
+
+.icon-background {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-right: 1rem;
 }
 
@@ -391,6 +400,10 @@ onMounted(() => {
   margin-left: 0.5rem;
 }
 
+.charts-section {
+  padding: 0 1rem;
+}
+
 .charts-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
@@ -399,6 +412,45 @@ onMounted(() => {
 
 .chart-card {
   min-height: 300px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.chart-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+}
+
+.chart-title {
+  background: linear-gradient(135deg, var(--va-primary) 0%, var(--va-secondary) 100%);
+  color: white;
+  padding: 1rem 1.5rem;
+  border-radius: 12px 12px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0;
+}
+
+.title-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.title-icon {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chart-content {
+  padding: 1.5rem;
 }
 
 .chart-container {
@@ -415,6 +467,24 @@ onMounted(() => {
 
 .chart-placeholder p {
   margin: 0.5rem 0;
+}
+
+.activity-card {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.activity-title {
+  background: linear-gradient(135deg, var(--va-primary) 0%, var(--va-secondary) 100%);
+  color: white;
+  padding: 1rem 1.5rem;
+  border-radius: 12px 12px 0 0;
+  margin-bottom: 0;
+}
+
+.activity-content {
+  padding: 1.5rem;
 }
 
 .activity-list {
@@ -449,15 +519,31 @@ onMounted(() => {
   margin-bottom: 0.25rem;
 }
 
-.activity-meta {
-  display: flex;
-  gap: 1rem;
+.activity-time {
   font-size: 0.8rem;
   color: var(--va-text-secondary);
 }
 
-.activity-user {
-  font-weight: 500;
+.activity-status {
+  margin-top: 0.5rem;
+}
+
+.actions-card {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.actions-title {
+  background: linear-gradient(135deg, var(--va-primary) 0%, var(--va-secondary) 100%);
+  color: white;
+  padding: 1rem 1.5rem;
+  border-radius: 12px 12px 0 0;
+  margin-bottom: 0;
+}
+
+.actions-content {
+  padding: 1.5rem;
 }
 
 .actions-grid {
@@ -468,6 +554,13 @@ onMounted(() => {
 
 .action-button {
   height: 48px;
+  border-radius: 8px;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.action-button:hover {
+  background-color: rgba(var(--va-primary-rgb), 0.1);
+  border-color: var(--va-primary);
 }
 
 @media (max-width: 768px) {
