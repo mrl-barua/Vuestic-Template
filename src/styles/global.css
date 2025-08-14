@@ -128,6 +128,32 @@
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
   --font-weight-extrabold: 800;
+
+  /* Theme Transition */
+  --theme-transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Dark Mode Color Overrides */
+.dark {
+  /* Dark Mode Color Palette */
+  --color-gray-50: #0f172a;
+  --color-gray-100: #1e293b;
+  --color-gray-200: #334155;
+  --color-gray-300: #475569;
+  --color-gray-400: #64748b;
+  --color-gray-500: #94a3b8;
+  --color-gray-600: #cbd5e1;
+  --color-gray-700: #e2e8f0;
+  --color-gray-800: #f1f5f9;
+  --color-gray-900: #f8fafc;
+
+  /* Dark Mode Shadow Overrides */
+  --shadow-1: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-2: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-3: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --shadow-4: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  --shadow-5: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+  --shadow-6: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
 /* Global Typography - Material Design Principles */
@@ -141,6 +167,19 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  transition: var(--theme-transition);
+}
+
+/* Dark Mode Body Overrides */
+.dark body {
+  color: var(--color-gray-100);
+  background-color: var(--color-gray-900);
+}
+
+/* Dark Mode HTML Element Overrides */
+.dark {
+  background-color: var(--color-gray-900);
+  color: var(--color-gray-100);
 }
 
 /* Typography Hierarchy - Material Design Type Scale */
@@ -150,6 +189,8 @@ h1, .h1 {
   line-height: var(--line-height-tight);
   letter-spacing: -0.025em;
   margin-bottom: var(--spacing-6);
+  color: var(--color-gray-900);
+  transition: var(--theme-transition);
 }
 
 h2, .h2 {
@@ -158,42 +199,64 @@ h2, .h2 {
   line-height: var(--line-height-snug);
   letter-spacing: -0.025em;
   margin-bottom: var(--spacing-5);
+  color: var(--color-gray-800);
+  transition: var(--theme-transition);
 }
 
 h3, .h3 {
   font-size: var(--font-size-3xl);
   font-weight: var(--font-weight-semibold);
   line-height: var(--line-height-snug);
+  letter-spacing: -0.025em;
   margin-bottom: var(--spacing-4);
+  color: var(--color-gray-800);
+  transition: var(--theme-transition);
 }
 
 h4, .h4 {
   font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-semibold);
   line-height: var(--line-height-snug);
+  letter-spacing: -0.025em;
   margin-bottom: var(--spacing-3);
+  color: var(--color-gray-700);
+  transition: var(--theme-transition);
 }
 
 h5, .h5 {
   font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-semibold);
   line-height: var(--line-height-snug);
+  letter-spacing: -0.025em;
   margin-bottom: var(--spacing-2);
+  color: var(--color-gray-700);
+  transition: var(--theme-transition);
 }
 
 h6, .h6 {
   font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-semibold);
   line-height: var(--line-height-snug);
+  letter-spacing: -0.025em;
   margin-bottom: var(--spacing-2);
+  color: var(--color-gray-700);
+  transition: var(--theme-transition);
 }
 
-p {
-  margin-bottom: var(--spacing-4);
-  line-height: var(--line-height-relaxed);
+/* Dark Mode Typography Overrides */
+.dark h1, .dark .h1 {
+  color: var(--color-gray-50);
 }
 
-/* Material Icons Styling */
+.dark h2, .dark .h2,
+.dark h3, .dark .h3,
+.dark h4, .dark .h4,
+.dark h5, .dark .h5,
+.dark h6, .dark .h6 {
+  color: var(--color-gray-100);
+}
+
+/* Material Icons Base Styles */
 .material-icons {
   font-family: 'Material Icons';
   font-weight: normal;
@@ -206,10 +269,14 @@ p {
   white-space: nowrap;
   word-wrap: normal;
   direction: ltr;
+  -webkit-font-feature-settings: 'liga';
   -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-  -moz-osx-font-smoothing: grayscale;
-  font-feature-settings: 'liga';
+  transition: var(--theme-transition);
+}
+
+/* Dark Mode Icon Overrides */
+.dark .material-icons {
+  color: var(--color-gray-100);
 }
 
 /* Layout Containers - Material Design Spacing */
@@ -412,66 +479,6 @@ p {
 .p-24 { padding: var(--spacing-24); }
 .p-32 { padding: var(--spacing-32); }
 
-.pt-0 { padding-top: var(--spacing-0); }
-.pt-1 { padding-top: var(--spacing-1); }
-.pt-2 { padding-top: var(--spacing-2); }
-.pt-3 { padding-top: var(--spacing-3); }
-.pt-4 { padding-top: var(--spacing-4); }
-.pt-5 { padding-top: var(--spacing-5); }
-.pt-6 { padding-top: var(--spacing-6); }
-.pt-8 { padding-top: var(--spacing-8); }
-.pt-10 { padding-top: var(--spacing-10); }
-.pt-12 { padding-top: var(--spacing-12); }
-.pt-16 { padding-top: var(--spacing-16); }
-.pt-20 { padding-top: var(--spacing-20); }
-.pt-24 { padding-top: var(--spacing-24); }
-.pt-32 { padding-top: var(--spacing-32); }
-
-.pb-0 { padding-bottom: var(--spacing-0); }
-.pb-1 { padding-bottom: var(--spacing-1); }
-.pb-2 { padding-bottom: var(--spacing-2); }
-.pb-3 { padding-bottom: var(--spacing-3); }
-.pb-4 { padding-bottom: var(--spacing-4); }
-.pb-5 { padding-bottom: var(--spacing-5); }
-.pb-6 { padding-bottom: var(--spacing-6); }
-.pb-8 { padding-bottom: var(--spacing-8); }
-.pb-10 { padding-bottom: var(--spacing-10); }
-.pb-12 { padding-bottom: var(--spacing-12); }
-.pb-16 { padding-bottom: var(--spacing-16); }
-.pb-20 { padding-bottom: var(--spacing-20); }
-.pb-24 { padding-bottom: var(--spacing-24); }
-.pb-32 { padding-bottom: var(--spacing-32); }
-
-.pl-0 { padding-left: var(--spacing-0); }
-.pl-1 { padding-left: var(--spacing-1); }
-.pl-2 { padding-left: var(--spacing-2); }
-.pl-3 { padding-left: var(--spacing-3); }
-.pl-4 { padding-left: var(--spacing-4); }
-.pl-5 { padding-left: var(--spacing-5); }
-.pl-6 { padding-left: var(--spacing-6); }
-.pl-8 { padding-left: var(--spacing-8); }
-.pl-10 { padding-left: var(--spacing-10); }
-.pl-12 { padding-left: var(--spacing-12); }
-.pl-16 { padding-left: var(--spacing-16); }
-.pl-20 { padding-left: var(--spacing-20); }
-.pl-24 { padding-left: var(--spacing-24); }
-.pl-32 { padding-left: var(--spacing-32); }
-
-.pr-0 { padding-right: var(--spacing-0); }
-.pr-1 { padding-right: var(--spacing-1); }
-.pr-2 { padding-right: var(--spacing-2); }
-.pr-3 { padding-right: var(--spacing-3); }
-.pr-4 { padding-right: var(--spacing-4); }
-.pr-5 { padding-right: var(--spacing-5); }
-.pr-6 { padding-right: var(--spacing-6); }
-.pr-8 { padding-right: var(--spacing-8); }
-.pr-10 { padding-right: var(--spacing-10); }
-.pr-12 { padding-right: var(--spacing-12); }
-.pr-16 { padding-right: var(--spacing-16); }
-.pr-20 { padding-right: var(--spacing-20); }
-.pr-24 { padding-right: var(--spacing-24); }
-.pr-32 { padding-right: var(--spacing-32); }
-
 .px-0 { padding-left: var(--spacing-0); padding-right: var(--spacing-0); }
 .px-1 { padding-left: var(--spacing-1); padding-right: var(--spacing-1); }
 .px-2 { padding-left: var(--spacing-2); padding-right: var(--spacing-2); }
@@ -526,11 +533,18 @@ p {
   transition: all var(--transition-normal);
   border: 1px solid var(--va-background-secondary);
   background: var(--va-background-primary);
+  transition: var(--theme-transition);
 }
 
 .va-card:hover {
   box-shadow: var(--shadow-4);
   transform: translateY(-2px);
+}
+
+/* Dark Mode Card Overrides */
+.dark .va-card {
+  border-color: var(--color-gray-800);
+  background: var(--color-gray-900);
 }
 
 /* Modern Button Styles */
@@ -541,6 +555,7 @@ p {
   text-transform: none;
   letter-spacing: 0.025em;
   padding: var(--spacing-2) var(--spacing-4);
+  transition: var(--theme-transition);
 }
 
 .va-button:hover {
@@ -552,16 +567,32 @@ p {
 .va-input {
   border-radius: var(--radius-2);
   transition: all var(--transition-normal);
+  transition: var(--theme-transition);
 }
 
 .va-input:focus-within {
   box-shadow: 0 0 0 3px rgba(var(--va-primary-rgb), 0.1);
 }
 
+/* Dark Mode Input Overrides */
+.dark .va-input {
+  background: var(--color-gray-800);
+  border-color: var(--color-gray-700);
+  color: var(--color-gray-100);
+}
+
 /* Modern Select Styles */
 .va-select {
   border-radius: var(--radius-2);
   transition: all var(--transition-normal);
+  transition: var(--theme-transition);
+}
+
+/* Dark Mode Select Overrides */
+.dark .va-select {
+  background: var(--color-gray-800);
+  border-color: var(--color-gray-700);
+  color: var(--color-gray-100);
 }
 
 /* Modern Chip Styles */
@@ -569,29 +600,46 @@ p {
   border-radius: var(--radius-2);
   font-weight: var(--font-weight-medium);
   transition: all var(--transition-normal);
+  transition: var(--theme-transition);
 }
 
 /* Modern Avatar Styles */
 .va-avatar {
   border-radius: var(--radius-2);
   transition: all var(--transition-normal);
+  transition: var(--theme-transition);
 }
 
 /* Modern Modal Styles */
 .va-modal {
   border-radius: var(--radius-4);
   overflow: hidden;
+  transition: var(--theme-transition);
+}
+
+/* Dark Mode Modal Overrides */
+.dark .va-modal {
+  background: var(--color-gray-900);
+  border-color: var(--color-gray-800);
 }
 
 /* Modern Table Styles */
 .va-data-table {
   border-radius: var(--radius-2);
   overflow: hidden;
+  transition: var(--theme-transition);
+}
+
+/* Dark Mode Table Overrides */
+.dark .va-data-table {
+  background: var(--color-gray-900);
+  border-color: var(--color-gray-800);
 }
 
 /* Smooth Scrolling */
 html {
   scroll-behavior: smooth;
+  transition: var(--theme-transition);
 }
 
 /* Focus Styles for Accessibility */
@@ -609,15 +657,924 @@ html {
 ::-webkit-scrollbar-track {
   background: var(--va-background-secondary);
   border-radius: var(--radius-1);
+  transition: var(--theme-transition);
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--va-background-tertiary);
   border-radius: var(--radius-1);
+  transition: var(--theme-transition);
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--va-background-quaternary);
+}
+
+/* Dark Mode Scrollbar Overrides */
+.dark ::-webkit-scrollbar-track {
+  background: var(--color-gray-800);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: var(--color-gray-600);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gray-500);
+}
+
+/* Additional Dark Mode Component Overrides */
+.dark .va-navbar {
+  background: var(--color-gray-900);
+  border-bottom: 1px solid var(--color-gray-800);
+}
+
+.dark .va-navbar-item {
+  color: var(--color-gray-100);
+}
+
+.dark .nav-link {
+  color: var(--color-gray-100);
+}
+
+.dark .nav-link:hover {
+  background-color: var(--color-gray-800);
+}
+
+.dark .nav-link.router-link-active {
+  background-color: var(--va-primary);
+  color: white;
+}
+
+/* Dark Mode Page Header Overrides */
+.dark .page-header-container {
+  background: linear-gradient(135deg, var(--va-primary) 0%, var(--va-primary-700) 100%);
+}
+
+.dark .page-header-container::before {
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(0,0,0,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(0,0,0,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(0,0,0,0.1)"/><circle cx="10" cy="60" r="0.5" fill="rgba(0,0,0,0.1)"/><circle cx="90" cy="40" r="0.5" fill="rgba(0,0,0,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+}
+
+/* Dark Mode Summary Item Overrides */
+.dark .summary-item {
+  background: var(--color-gray-800);
+  border-color: var(--color-gray-700);
+}
+
+.dark .summary-value {
+  color: var(--color-gray-100);
+}
+
+.dark .summary-label {
+  color: var(--color-gray-300);
+}
+
+/* Dark Mode Activity Item Overrides */
+.dark .activity-item {
+  background: var(--color-gray-800);
+  border-color: var(--color-gray-700);
+}
+
+.dark .activity-item:hover {
+  background: var(--color-gray-700);
+}
+
+.dark .activity-text {
+  color: var(--color-gray-100);
+}
+
+.dark .activity-time {
+  color: var(--color-gray-300);
+}
+
+/* Dark Mode Control Overrides */
+.dark .control-label {
+  color: var(--color-gray-100);
+}
+
+.dark .control-input,
+.dark .control-select {
+  background: var(--color-gray-800);
+  border-color: var(--color-gray-700);
+  color: var(--color-gray-100);
+}
+
+.dark .control-input:focus,
+.dark .control-select:focus {
+  border-color: var(--va-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Dark Mode Table Overrides */
+.dark .va-data-table th {
+  background: var(--color-gray-800);
+  color: var(--color-gray-100);
+  border-color: var(--color-gray-700);
+}
+
+.dark .va-data-table td {
+  background: var(--color-gray-900);
+  color: var(--color-gray-100);
+  border-color: var(--color-gray-800);
+}
+
+.dark .va-data-table tr:hover td {
+  background: var(--color-gray-800);
+}
+
+/* Dark Mode Chip Overrides */
+.dark .va-chip {
+  background: var(--color-gray-800);
+  border-color: var(--color-gray-700);
+  color: var(--color-gray-100);
+}
+
+/* Dark Mode Avatar Overrides */
+.dark .va-avatar {
+  border-color: var(--color-gray-700);
+}
+
+/* Dark Mode Modal Overrides */
+.dark .va-modal-header {
+  background: var(--color-gray-900);
+  border-bottom-color: var(--color-gray-800);
+}
+
+.dark .va-modal-body {
+  background: var(--color-gray-900);
+  color: var(--color-gray-100);
+}
+
+.dark .va-modal-footer {
+  background: var(--color-gray-900);
+  border-top-color: var(--color-gray-800);
+}
+
+/* Dark Mode Tooltip Overrides */
+.dark .va-tooltip {
+  background: var(--color-gray-800);
+  color: var(--color-gray-100);
+  border-color: var(--color-gray-700);
+}
+
+/* Dark Mode Dropdown Overrides */
+.dark .va-dropdown-content {
+  background: var(--color-gray-900);
+  border-color: var(--color-gray-700);
+}
+
+.dark .va-dropdown-item {
+  color: var(--color-gray-100);
+}
+
+.dark .va-dropdown-item:hover {
+  background: var(--color-gray-800);
+}
+
+/* Dark Mode Pagination Overrides */
+.dark .va-pagination-item {
+  background: var(--color-gray-800);
+  border-color: var(--color-gray-700);
+  color: var(--color-gray-100);
+}
+
+.dark .va-pagination-item:hover {
+  background: var(--color-gray-700);
+}
+
+.dark .va-pagination-item--active {
+  background: var(--va-primary);
+  color: white;
+}
+
+/* Dark Mode Progress Bar Overrides */
+.dark .va-progress-bar {
+  background: var(--color-gray-800);
+}
+
+.dark .va-progress-bar__fill {
+  background: var(--va-primary);
+}
+
+/* Dark Mode Badge Overrides */
+.dark .va-badge {
+  background: var(--color-gray-800);
+  color: var(--color-gray-100);
+}
+
+/* Dark Mode Alert Overrides */
+.dark .va-alert {
+  background: var(--color-gray-800);
+  border-color: var(--color-gray-700);
+  color: var(--color-gray-100);
+}
+
+/* Dark Mode Breadcrumb Overrides */
+.dark .va-breadcrumb-item {
+  color: var(--color-gray-300);
+}
+
+.dark .va-breadcrumb-item--active {
+  color: var(--color-gray-100);
+}
+
+.dark .va-breadcrumb-separator {
+  color: var(--color-gray-500);
+}
+
+/* Dark Mode Tabs Overrides */
+.dark .va-tabs-tab {
+  color: var(--color-gray-300);
+}
+
+.dark .va-tabs-tab--active {
+  color: var(--va-primary);
+}
+
+.dark .va-tabs-tab:hover {
+  color: var(--color-gray-100);
+}
+
+.dark .va-tabs-content {
+  background: var(--color-gray-900);
+  border-color: var(--color-gray-800);
+}
+
+/* Dark Mode Accordion Overrides */
+.dark .va-accordion-item {
+  background: var(--color-gray-900);
+  border-color: var(--color-gray-800);
+}
+
+.dark .va-accordion-header {
+  background: var(--color-gray-800);
+  color: var(--color-gray-100);
+}
+
+.dark .va-accordion-content {
+  background: var(--color-gray-900);
+  color: var(--color-gray-100);
+}
+
+/* Dark Mode Timeline Overrides */
+.dark .va-timeline-item {
+  color: var(--color-gray-100);
+}
+
+.dark .va-timeline-item::before {
+  background: var(--color-gray-700);
+}
+
+/* Dark Mode Rating Overrides */
+.dark .va-rating-item {
+  color: var(--color-gray-600);
+}
+
+.dark .va-rating-item--active {
+  color: var(--color-warning-500);
+}
+
+/* Dark Mode Slider Overrides */
+.dark .va-slider-track {
+  background: var(--color-gray-700);
+}
+
+.dark .va-slider-thumb {
+  background: var(--va-primary);
+  border-color: var(--color-gray-600);
+}
+
+/* Dark Mode Switch Overrides */
+.dark .va-switch-track {
+  background: var(--color-gray-700);
+}
+
+.dark .va-switch-thumb {
+  background: var(--color-gray-600);
+}
+
+.dark .va-switch--checked .va-switch-track {
+  background: var(--va-primary);
+}
+
+.dark .va-switch--checked .va-switch-thumb {
+  background: white;
+}
+
+/* Dark Mode Checkbox Overrides */
+.dark .va-checkbox {
+  color: var(--color-gray-100);
+}
+
+.dark .va-checkbox__input {
+  border-color: var(--color-gray-600);
+}
+
+.dark .va-checkbox__input:checked {
+  background: var(--va-primary);
+  border-color: var(--va-primary);
+}
+
+/* Dark Mode Radio Overrides */
+.dark .va-radio {
+  color: var(--color-gray-100);
+}
+
+.dark .va-radio__input {
+  border-color: var(--color-gray-600);
+}
+
+.dark .va-radio__input:checked {
+  border-color: var(--va-primary);
+}
+
+.dark .va-radio__input:checked::after {
+  background: var(--va-primary);
+}
+
+/* Dark Mode Textarea Overrides */
+.dark .va-textarea {
+  background: var(--color-gray-800);
+  border-color: var(--color-gray-700);
+  color: var(--color-gray-100);
+}
+
+.dark .va-textarea:focus {
+  border-color: var(--va-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Dark Mode File Input Overrides */
+.dark .va-file-upload {
+  background: var(--color-gray-800);
+  border-color: var(--color-gray-700);
+  color: var(--color-gray-100);
+}
+
+.dark .va-file-upload:hover {
+  border-color: var(--va-primary);
+}
+
+/* Dark Mode Date Picker Overrides */
+.dark .va-date-picker {
+  background: var(--color-gray-900);
+  border-color: var(--color-gray-700);
+}
+
+.dark .va-date-picker-header {
+  background: var(--color-gray-800);
+  color: var(--color-gray-100);
+}
+
+.dark .va-date-picker-day {
+  color: var(--color-gray-100);
+}
+
+.dark .va-date-picker-day:hover {
+  background: var(--color-gray-700);
+}
+
+.dark .va-date-picker-day--selected {
+  background: var(--va-primary);
+  color: white;
+}
+
+.dark .va-date-picker-day--today {
+  border-color: var(--va-primary);
+}
+
+/* Dark Mode Time Picker Overrides */
+.dark .va-time-picker {
+  background: var(--color-gray-900);
+  border-color: var(--color-gray-700);
+}
+
+.dark .va-time-picker-header {
+  background: var(--color-gray-800);
+  color: var(--color-gray-100);
+}
+
+.dark .va-time-picker-item {
+  color: var(--color-gray-100);
+}
+
+.dark .va-time-picker-item:hover {
+  background: var(--color-gray-700);
+}
+
+.dark .va-time-picker-item--selected {
+  background: var(--va-primary);
+  color: white;
+}
+
+/* Dark Mode Color Picker Overrides */
+.dark .va-color-picker {
+  background: var(--color-gray-900);
+  border-color: var(--color-gray-700);
+}
+
+.dark .va-color-picker-palette {
+  background: var(--color-gray-800);
+}
+
+/* Dark Mode Tree Overrides */
+.dark .va-tree-node {
+  color: var(--color-gray-100);
+}
+
+.dark .va-tree-node:hover {
+  background: var(--color-gray-800);
+}
+
+.dark .va-tree-node--selected {
+  background: var(--va-primary);
+  color: white;
+}
+
+/* Dark Mode Menu Overrides */
+.dark .va-menu {
+  background: var(--color-gray-900);
+  border-color: var(--color-gray-700);
+}
+
+.dark .va-menu-item {
+  color: var(--color-gray-100);
+}
+
+.dark .va-menu-item:hover {
+  background: var(--color-gray-800);
+}
+
+.dark .va-menu-item--active {
+  background: var(--va-primary);
+  color: white;
+}
+
+/* Dark Mode Notification Overrides */
+.dark .va-notification {
+  background: var(--color-gray-900);
+  border-color: var(--color-gray-700);
+  color: var(--color-gray-100);
+}
+
+.dark .va-notification--success {
+  background: var(--color-success-700);
+  color: white;
+}
+
+.dark .va-notification--warning {
+  background: var(--color-warning-700);
+  color: white;
+}
+
+.dark .va-notification--danger {
+  background: var(--color-danger-700);
+  color: white;
+}
+
+.dark .va-notification--info {
+  background: var(--va-info);
+  color: white;
+}
+
+/* Dark Mode Skeleton Overrides */
+.dark .va-skeleton {
+  background: var(--color-gray-800);
+}
+
+.dark .va-skeleton::after {
+  background: linear-gradient(90deg, transparent, var(--color-gray-700), transparent);
+}
+
+/* Dark Mode Divider Overrides */
+.dark .va-divider {
+  border-color: var(--color-gray-700);
+}
+
+/* Dark Mode Link Overrides */
+.dark a {
+  color: var(--va-primary);
+}
+
+.dark a:hover {
+  color: var(--va-primary-600);
+}
+
+/* Dark Mode Code Overrides */
+.dark code {
+  background: var(--color-gray-800);
+  color: var(--color-gray-100);
+  border-color: var(--color-gray-700);
+}
+
+.dark pre {
+  background: var(--color-gray-800);
+  color: var(--color-gray-100);
+  border-color: var(--color-gray-700);
+}
+
+/* Dark Mode Blockquote Overrides */
+.dark blockquote {
+  border-left-color: var(--va-primary);
+  background: var(--color-gray-800);
+  color: var(--color-gray-100);
+}
+
+/* Dark Mode Mark Overrides */
+.dark mark {
+  background: var(--color-warning-500);
+  color: var(--color-gray-900);
+}
+
+/* Dark Mode Selection Overrides */
+.dark ::selection {
+  background: var(--va-primary);
+  color: white;
+}
+
+.dark ::-moz-selection {
+  background: var(--va-primary);
+  color: white;
+}
+
+/* Dark Mode Focus Ring Overrides */
+.dark *:focus {
+  outline-color: var(--va-primary);
+}
+
+/* Dark Mode Placeholder Overrides */
+.dark ::placeholder {
+  color: var(--color-gray-400);
+}
+
+.dark ::-webkit-input-placeholder {
+  color: var(--color-gray-400);
+}
+
+.dark ::-moz-placeholder {
+  color: var(--color-gray-400);
+}
+
+.dark ::-ms-input-placeholder {
+  color: var(--color-gray-400);
+}
+
+/* Additional Global Dark Mode Styles */
+.dark #app {
+  background-color: var(--color-gray-900);
+}
+
+.dark .container {
+  background-color: transparent;
+}
+
+.dark .page-header-container,
+.dark .page-header-content,
+.dark .page-header-text,
+.dark .page-header-actions {
+  background-color: transparent;
+}
+
+.dark .stats-grid,
+.dark .metrics-grid,
+.dark .charts-section,
+.dark .summary-section,
+.dark .mock-data-section,
+.dark .controls-section,
+.dark .activity-section {
+  background-color: transparent;
+}
+
+.dark .stat-card,
+.dark .metric-card,
+.dark .chart-card,
+.dark .summary-card,
+.dark .mock-data-card,
+.dark .controls-card,
+.dark .activity-card {
+  background-color: var(--color-gray-900);
+  border-color: var(--color-gray-800);
+}
+
+.dark .stat-content,
+.dark .metric-content,
+.dark .chart-content,
+.dark .summary-content,
+.dark .mock-data-content,
+.dark .controls-content,
+.dark .activity-content {
+  background-color: transparent;
+}
+
+.dark .stat-info,
+.dark .metric-info {
+  background-color: transparent;
+}
+
+.dark .stat-number,
+.dark .metric-number {
+  color: var(--color-gray-100);
+}
+
+.dark .stat-label,
+.dark .metric-label {
+  color: var(--color-gray-300);
+}
+
+.dark .stat-change,
+.dark .metric-change {
+  color: var(--color-gray-400);
+}
+
+.dark .stat-change.up,
+.dark .metric-change.up {
+  color: var(--color-success-500);
+}
+
+.dark .stat-change.down,
+.dark .metric-change.down {
+  color: var(--color-danger-500);
+}
+
+.dark .chart-title,
+.dark .summary-title,
+.dark .mock-data-title,
+.dark .controls-title,
+.dark .activity-title {
+  color: var(--color-gray-100);
+}
+
+.dark .title-content {
+  background-color: transparent;
+}
+
+.dark .title-icon {
+  color: var(--va-primary);
+}
+
+.dark .chart-bars {
+  background-color: transparent;
+}
+
+.dark .chart-bar {
+  background-color: var(--va-primary);
+}
+
+.dark .bar-label,
+.dark .bar-value {
+  color: var(--color-gray-300);
+}
+
+.dark .pie-chart-placeholder {
+  background-color: var(--color-gray-800);
+  border-color: var(--color-gray-700);
+}
+
+.dark .text-caption {
+  color: var(--color-gray-400);
+}
+
+.dark .performance-metrics {
+  background-color: transparent;
+}
+
+.dark .metric-item {
+  background-color: var(--color-gray-800);
+  border-color: var(--color-gray-700);
+}
+
+.dark .metric-header {
+  background-color: transparent;
+}
+
+.dark .metric-name {
+  color: var(--color-gray-100);
+}
+
+.dark .metric-value {
+  color: var(--color-gray-300);
+}
+
+.dark .metric-bar {
+  background-color: var(--color-gray-700);
+}
+
+.dark .metric-progress {
+  background-color: var(--va-primary);
+}
+
+.dark .action-buttons {
+  background-color: transparent;
+}
+
+.dark .action-btn {
+  background-color: var(--color-gray-800);
+  border-color: var(--color-gray-700);
+  color: var(--color-gray-100);
+}
+
+.dark .action-btn:hover {
+  background-color: var(--color-gray-700);
+}
+
+.dark .control-group {
+  background-color: transparent;
+}
+
+.dark .control-actions {
+  background-color: transparent;
+}
+
+.dark .control-btn {
+  background-color: var(--color-gray-800);
+  border-color: var(--color-gray-700);
+  color: var(--color-gray-100);
+}
+
+.dark .control-btn:hover {
+  background-color: var(--color-gray-700);
+}
+
+/* Dark Mode Home Page Specific Styles */
+.dark .hero-container {
+  background: linear-gradient(135deg, var(--va-primary) 0%, var(--va-primary-700) 100%);
+}
+
+.dark .hero-content {
+  background-color: transparent;
+}
+
+.dark .hero-text {
+  background-color: transparent;
+}
+
+.dark .hero-title {
+  color: white;
+}
+
+.dark .hero-subtitle {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.dark .hero-description {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.dark .hero-actions {
+  background-color: transparent;
+}
+
+.dark .hero-visual {
+  background-color: transparent;
+}
+
+.dark .hero-icon-container {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark .hero-icon {
+  color: white;
+}
+
+.dark .features-section {
+  background-color: transparent;
+}
+
+.dark .features-grid {
+  background-color: transparent;
+}
+
+.dark .feature-card {
+  background-color: var(--color-gray-900);
+  border-color: var(--color-gray-800);
+}
+
+.dark .feature-content {
+  background-color: transparent;
+}
+
+.dark .feature-title {
+  color: var(--color-gray-100);
+}
+
+.dark .feature-description {
+  color: var(--color-gray-300);
+}
+
+.dark .architecture-section {
+  background-color: transparent;
+}
+
+.dark .architecture-card {
+  background-color: var(--color-gray-900);
+  border-color: var(--color-gray-800);
+}
+
+.dark .architecture-content {
+  background-color: transparent;
+}
+
+.dark .architecture-grid {
+  background-color: transparent;
+}
+
+.dark .arch-layer {
+  background-color: var(--color-gray-800);
+  border-color: var(--color-gray-700);
+}
+
+.dark .layer-header {
+  background-color: transparent;
+}
+
+.dark .layer-name {
+  color: var(--color-gray-100);
+}
+
+.dark .layer-description {
+  color: var(--color-gray-300);
+}
+
+.dark .tech-stack-card {
+  background-color: var(--color-gray-900);
+  border-color: var(--color-gray-800);
+}
+
+.dark .tech-stack-title {
+  background-color: transparent;
+}
+
+.dark .tech-stack-content {
+  background-color: transparent;
+}
+
+.dark .tech-grid {
+  background-color: transparent;
+}
+
+.dark .tech-category {
+  background-color: transparent;
+}
+
+.dark .category-name {
+  color: var(--color-gray-100);
+}
+
+.dark .tech-items {
+  background-color: transparent;
+}
+
+.dark .tech-item {
+  background-color: var(--color-gray-800);
+  border-color: var(--color-gray-700);
+}
+
+.dark .tech-name {
+  color: var(--color-gray-100);
+}
+
+.dark .getting-started-card {
+  background-color: var(--color-gray-900);
+  border-color: var(--color-gray-800);
+}
+
+.dark .getting-started-title {
+  background-color: transparent;
+}
+
+.dark .getting-started-content {
+  background-color: transparent;
+}
+
+.dark .steps-grid {
+  background-color: transparent;
+}
+
+.dark .step {
+  background-color: var(--color-gray-800);
+  border-color: var(--color-gray-700);
+}
+
+.dark .step-content {
+  background-color: transparent;
+}
+
+.dark .step-title {
+  color: var(--color-gray-100);
+}
+
+.dark .step-description {
+  color: var(--color-gray-300);
+}
+
+.dark .step-action {
+  background-color: var(--va-primary);
+  color: white;
+}
+
+/* Dark Mode Step Action Hover */
+.dark .step-action:hover {
+  background-color: var(--va-primary-600);
 }
 
 /* Animation Classes */
@@ -704,18 +1661,6 @@ html {
   }
 }
 
-/* Dark Mode Enhancements */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --shadow-1: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-    --shadow-2: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-    --shadow-3: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
-    --shadow-4: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
-    --shadow-5: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
-    --shadow-6: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  }
-}
-
 /* Print Styles */
 @media print {
   .va-card {
@@ -726,4 +1671,457 @@ html {
   .va-button {
     display: none;
   }
+}
+
+/* Additional Global Dark Mode Text and Element Overrides */
+.dark p {
+  color: var(--color-gray-300);
+}
+
+.dark span {
+  color: inherit;
+}
+
+.dark label {
+  color: var(--color-gray-100);
+}
+
+.dark small {
+  color: var(--color-gray-400);
+}
+
+.dark strong {
+  color: var(--color-gray-100);
+}
+
+.dark em {
+  color: var(--color-gray-300);
+}
+
+.dark ul, .dark ol {
+  color: var(--color-gray-300);
+}
+
+.dark li {
+  color: var(--color-gray-300);
+}
+
+.dark dt {
+  color: var(--color-gray-100);
+}
+
+.dark dd {
+  color: var(--color-gray-300);
+}
+
+.dark fieldset {
+  border-color: var(--color-gray-700);
+}
+
+.dark legend {
+  color: var(--color-gray-100);
+}
+
+.dark hr {
+  border-color: var(--color-gray-700);
+}
+
+.dark abbr {
+  color: var(--color-gray-300);
+}
+
+.dark acronym {
+  color: var(--color-gray-300);
+}
+
+.dark address {
+  color: var(--color-gray-300);
+}
+
+.dark cite {
+  color: var(--color-gray-300);
+}
+
+.dark dfn {
+  color: var(--color-gray-300);
+}
+
+.dark kbd {
+  background-color: var(--color-gray-800);
+  color: var(--color-gray-100);
+  border-color: var(--color-gray-600);
+}
+
+.dark samp {
+  background-color: var(--color-gray-800);
+  color: var(--color-gray-100);
+  border-color: var(--color-gray-600);
+}
+
+.dark var {
+  color: var(--color-gray-300);
+}
+
+.dark sub {
+  color: var(--color-gray-400);
+}
+
+.dark sup {
+  color: var(--color-gray-400);
+}
+
+.dark ins {
+  background-color: var(--color-success-500);
+  color: var(--color-gray-900);
+}
+
+.dark del {
+  color: var(--color-danger-500);
+}
+
+/* Dark Mode Form Element Overrides */
+.dark input[type="text"],
+.dark input[type="email"],
+.dark input[type="password"],
+.dark input[type="number"],
+.dark input[type="tel"],
+.dark input[type="url"],
+.dark input[type="search"],
+.dark textarea {
+  background-color: var(--color-gray-800);
+  border-color: var(--color-gray-700);
+  color: var(--color-gray-100);
+}
+
+.dark input[type="text"]:focus,
+.dark input[type="email"]:focus,
+.dark input[type="password"]:focus,
+.dark input[type="number"]:focus,
+.dark input[type="tel"]:focus,
+.dark input[type="url"]:focus,
+.dark input[type="search"]:focus,
+.dark textarea:focus {
+  border-color: var(--va-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.dark input[type="text"]::placeholder,
+.dark input[type="email"]::placeholder,
+.dark input[type="password"]::placeholder,
+.dark input[type="number"]::placeholder,
+.dark input[type="tel"]::placeholder,
+.dark input[type="url"]::placeholder,
+.dark input[type="search"]::placeholder,
+.dark textarea::placeholder {
+  color: var(--color-gray-400);
+}
+
+/* Dark Mode Button Overrides */
+.dark button {
+  background-color: var(--color-gray-800);
+  border-color: var(--color-gray-700);
+  color: var(--color-gray-100);
+}
+
+.dark button:hover {
+  background-color: var(--color-gray-700);
+}
+
+.dark button:focus {
+  border-color: var(--va-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Dark Mode Select Overrides */
+.dark select {
+  background-color: var(--color-gray-800);
+  border-color: var(--color-gray-700);
+  color: var(--color-gray-100);
+}
+
+.dark select:focus {
+  border-color: var(--va-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.dark option {
+  background-color: var(--color-gray-800);
+  color: var(--color-gray-100);
+}
+
+/* Dark Mode Fieldset and Legend Overrides */
+.dark fieldset {
+  background-color: transparent;
+}
+
+.dark legend {
+  background-color: transparent;
+}
+
+/* Dark Mode Table Overrides */
+.dark table {
+  background-color: transparent;
+}
+
+.dark caption {
+  color: var(--color-gray-300);
+}
+
+.dark colgroup {
+  background-color: transparent;
+}
+
+.dark col {
+  background-color: transparent;
+}
+
+.dark thead {
+  background-color: transparent;
+}
+
+.dark tbody {
+  background-color: transparent;
+}
+
+.dark tfoot {
+  background-color: transparent;
+}
+
+.dark tr {
+  background-color: transparent;
+}
+
+/* Dark Mode List Overrides */
+.dark ul, .dark ol {
+  background-color: transparent;
+}
+
+.dark li {
+  background-color: transparent;
+}
+
+.dark dl {
+  background-color: transparent;
+}
+
+.dark dt {
+  background-color: transparent;
+}
+
+.dark dd {
+  background-color: transparent;
+}
+
+/* Dark Mode Definition List Overrides */
+.dark dl {
+  background-color: transparent;
+}
+
+/* Dark Mode Navigation Overrides */
+.dark nav {
+  background-color: transparent;
+}
+
+.dark nav ul {
+  background-color: transparent;
+}
+
+.dark nav li {
+  background-color: transparent;
+}
+
+/* Dark Mode Section Overrides */
+.dark section {
+  background-color: transparent;
+}
+
+.dark article {
+  background-color: transparent;
+}
+
+.dark aside {
+  background-color: transparent;
+}
+
+.dark header {
+  background-color: transparent;
+}
+
+.dark footer {
+  background-color: transparent;
+}
+
+.dark main {
+  background-color: transparent;
+}
+
+/* Dark Mode Figure and Figcaption Overrides */
+.dark figure {
+  background-color: transparent;
+}
+
+.dark figcaption {
+  color: var(--color-gray-300);
+}
+
+/* Dark Mode Details and Summary Overrides */
+.dark details {
+  background-color: transparent;
+}
+
+.dark summary {
+  color: var(--color-gray-100);
+}
+
+/* Dark Mode Mark Overrides */
+.dark mark {
+  background-color: var(--color-warning-500);
+  color: var(--color-gray-900);
+}
+
+/* Dark Mode Time Overrides */
+.dark time {
+  color: var(--color-gray-300);
+}
+
+/* Dark Mode Data Overrides */
+.dark data {
+  color: var(--color-gray-300);
+}
+
+/* Dark Mode Meter Overrides */
+.dark meter {
+  background-color: var(--color-gray-800);
+}
+
+.dark meter::-webkit-meter-bar {
+  background-color: var(--color-gray-700);
+}
+
+.dark meter::-webkit-meter-optimum-value {
+  background-color: var(--color-success-500);
+}
+
+.dark meter::-webkit-meter-suboptimum-value {
+  background-color: var(--color-warning-500);
+}
+
+.dark meter::-webkit-meter-even-less-good-value {
+  background-color: var(--color-danger-500);
+}
+
+/* Dark Mode Progress Overrides */
+.dark progress {
+  background-color: var(--color-gray-800);
+}
+
+.dark progress::-webkit-progress-bar {
+  background-color: var(--color-gray-700);
+}
+
+.dark progress::-webkit-progress-value {
+  background-color: var(--va-primary);
+}
+
+.dark progress::-moz-progress-bar {
+  background-color: var(--va-primary);
+}
+
+/* Dark Mode Output Overrides */
+.dark output {
+  color: var(--color-gray-100);
+}
+
+/* Dark Mode Canvas Overrides */
+.dark canvas {
+  background-color: var(--color-gray-900);
+}
+
+/* Dark Mode SVG Overrides */
+.dark svg {
+  fill: currentColor;
+}
+
+/* Dark Mode IFrame Overrides */
+.dark iframe {
+  background-color: var(--color-gray-900);
+}
+
+/* Dark Mode Object Overrides */
+.dark object {
+  background-color: var(--color-gray-900);
+}
+
+/* Dark Mode Embed Overrides */
+.dark embed {
+  background-color: var(--color-gray-900);
+}
+
+/* Dark Mode Video Overrides */
+.dark video {
+  background-color: var(--color-gray-900);
+}
+
+/* Dark Mode Audio Overrides */
+.dark audio {
+  background-color: var(--color-gray-900);
+}
+
+/* Dark Mode Source Overrides */
+.dark source {
+  background-color: transparent;
+}
+
+/* Dark Mode Track Overrides */
+.dark track {
+  background-color: transparent;
+}
+
+/* Dark Mode Map Overrides */
+.dark map {
+  background-color: transparent;
+}
+
+.dark area {
+  background-color: transparent;
+}
+
+/* Dark Mode Math Overrides */
+.dark math {
+  background-color: transparent;
+}
+
+/* Dark Mode Script Overrides */
+.dark script {
+  background-color: transparent;
+}
+
+/* Dark Mode Style Overrides */
+.dark style {
+  background-color: transparent;
+}
+
+/* Dark Mode Link Overrides */
+.dark link {
+  background-color: transparent;
+}
+
+/* Dark Mode Meta Overrides */
+.dark meta {
+  background-color: transparent;
+}
+
+/* Dark Mode Title Overrides */
+.dark title {
+  background-color: transparent;
+}
+
+/* Dark Mode Base Overrides */
+.dark base {
+  background-color: transparent;
+}
+
+/* Dark Mode Head Overrides */
+.dark head {
+  background-color: transparent;
 }

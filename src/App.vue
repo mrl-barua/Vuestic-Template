@@ -15,7 +15,13 @@
       </template>
       <template #right>
         <va-navbar-item>
-          <va-button @click="toggleTheme" :icon="themeIcon" />
+          <va-button 
+            @click="toggleTheme" 
+            :icon="themeIcon" 
+            class="theme-toggle-btn"
+            :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+            :title="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+          />
         </va-navbar-item>
       </template>
     </va-navbar>
@@ -41,6 +47,7 @@ const themeIcon = computed(() => isDark.value ? 'dark_mode' : 'light_mode')
 #app {
   min-height: 100vh;
   background: var(--va-background-primary);
+  transition: var(--theme-transition);
 }
 
 .container {
@@ -64,5 +71,42 @@ const themeIcon = computed(() => isDark.value ? 'dark_mode' : 'light_mode')
 .nav-link.router-link-active {
   background-color: var(--va-primary);
   color: white;
+}
+
+.theme-toggle-btn {
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-normal);
+  background: var(--va-background-secondary);
+  border: 1px solid var(--va-background-tertiary);
+  color: var(--va-text-primary);
+}
+
+.theme-toggle-btn:hover {
+  background: var(--va-background-tertiary);
+  transform: scale(1.05);
+  box-shadow: var(--shadow-3);
+}
+
+.theme-toggle-btn:focus {
+  outline: 2px solid var(--va-primary);
+  outline-offset: 2px;
+}
+
+/* Dark mode specific button styles */
+:global(.dark) .theme-toggle-btn {
+  background: var(--color-gray-800);
+  border-color: var(--color-gray-700);
+  color: var(--color-gray-100);
+}
+
+:global(.dark) .theme-toggle-btn:hover {
+  background: var(--color-gray-700);
 }
 </style>
